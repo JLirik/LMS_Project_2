@@ -28,7 +28,7 @@ def terminate():
     sys.exit()
 
 
-def start_screen():
+def start_screen():  # Создание экрана
     intro_text = [
         "Вы бегаете по лабиринту за пса",
         "и лопаете чупринчиков.",
