@@ -1,0 +1,37 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyInterpreterInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyPep8NamingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="N802" />
+          <option value="N806" />
+          <option value="N803" />
+          <option value="N801" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="tuple.__setitem__" />
+          <option value="list.index" />
+          <option value="tuple.bind" />
+          <option value="int.__getitem__" />
+          <option value="str.inflect" />
+          <option value="tuple.get_x" />
+          <option value="tuple.get_y" />
+          <option value="tuple.get_w" />
+          <option value="tuple.get_h" />
+          <option value="str.__setitem__" />
+          <option value="_collections_abc.dict_keys.__getitem__" />
+          <option value="LMS_project.YT_studio.create.clicked" />
+          <option value="PyQt5.QtWidgets.create.clicked" />
+          <option value="LMS_project.main.login_change.clicked" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="ReassignedToPlainText" enabled="false" level="WARNING" enabled_by_default="false" />
+  </profile>
+</component>
