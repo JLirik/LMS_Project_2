@@ -56,6 +56,7 @@ def start_screen():  # Создание экрана
                 if 750 < event.pos[0] < 900 and 500 < event.pos[1] < 575:
                     return  # начинаем игру
                 if 550 < event.pos[0] < 700 and 500 < event.pos[1] < 575:
+
                     text_font = pygame.font.Font(None, 30)
                     pygame.draw.rect(screen, 'PeachPuff', [105, 420, 400, 155], border_radius=10)
                     text_coord = 440
