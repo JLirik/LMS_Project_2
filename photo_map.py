@@ -26,6 +26,8 @@ def board():
                 karta[c].append('#')
             elif r == 147 and g == 112 and b == 219:
                 karta[c].append('~')
+            else:
+                karta[c].append('~')
         c += 1
     return karta
 
