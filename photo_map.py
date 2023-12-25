@@ -1,18 +1,38 @@
 from PIL import Image, ImageDraw
 
-karta = [[]]
+karta = []
+f = open('data\lvl1.txt', 'w')
 
 
-def board(num, size):
-    im = Image.open("image.jpg")
+# Free cells - rgb(40, 150, 40) - '='
+# Walls - rgb(200, 200, 16) - '#'
+# Wall cells - rgb(147, 112, 219) - '~'
+
+
+def board():
+    global karta
+    im = Image.open("data\level1.png")
     pixels = im.load()  # список с пикселями
     x, y = im.size  # ширина (x) и высота (y) изображения
+    c = 0
 
-    for j in range(0, y, 5):
-        for i in range(0, x, 5):
-            r, g, b = pixels[i, j]
-            if r == 0 and g == 0 and b == 0:
-                karta[j].append('#')
-            else:
-                karta[j].append('=')
+    for j in range(0, y, 1):
+        karta.append([])
+        for i in range(0, x, 1):
+            r, g, b = pixels[i, j][:-1]
+            if r == 40 and g == 150 and b == 40:
+                karta[c].append('=')
+            elif r == 200 and g == 200 and b == 16:
+                karta[c].append('#')
+            elif r == 147 and g == 112 and b == 219:
+                karta[c].append('~')
+        c += 1
+    return karta
 
+
+a = board()
+for e in a:
+    print(e)
+    f.write(''.join(e) + '\n')
+print(len(a))
+f.close()
