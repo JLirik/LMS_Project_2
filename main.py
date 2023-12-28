@@ -86,13 +86,13 @@ def load_level(filename):
         level_map = [line.strip() for line in mapFile]
 
     # и подсчитываем максимальную длину
-    max_width = max(map(len, level_map))
-    print(max_width)
+    # max_width = max(map(len, level_map))
+    # print(max_width)
 
     # дополняем каждую строку пустыми клетками ('=') + убираем ненужные клетки
-    lvl_1 = list(map(lambda x: x.ljust(max_width, '='), level_map))
+    # lvl_1 = list(map(lambda x: x.ljust(max_width, '='), level_map))
 
-    return lvl_1
+    return level_map
 
 
 level = load_level('lvl1.txt')
@@ -100,36 +100,59 @@ level = load_level('lvl1.txt')
 
 
 tile_images = {
-    # 'wall': load_image('textura_stena.jpg'),
-    # 'empty': load_image('textura_pol.jpg'),
-    # 'inwall': load_image('textura_V_stene_1.jpg')
-    'wall': load_image('textura_1_stena.jpg'),
-    'empty': load_image('textura_1_pol.jpg'),
-    'inwall': load_image('textura_1_V_stene.jpg')
+    'Right_wall': load_image('textura_1_stena.jpg'),
+    'Down_wall': load_image('textura_1_stena.jpg'),
+    'free_cell': load_image('textura_1_pol.jpg'),
+    'free_right': load_image('textura_1_pol.jpg'),
+    'free_down': load_image('textura_1_pol.jpg'),
+    'close_cell': load_image('textura_1_V_stene.jpg'),
+    'dog': load_image('fon.jpg'),
 }
 # player_image = load_image('mar.png')
 
-tile_width = tile_height = 15
+tile_width_cell = tile_height_cell = 50
+tile_width_wall_right = 25
+tile_height_wall_right = 50
+tile_width_wall_down = 75
+tile_height_wall_down = 25
 
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(tiles_group, all_sprites)
         self.image = tile_images[tile_type]
-        self.rect = self.image.get_rect().move(
-            tile_width * pos_x, tile_height * pos_y)
+        if tile_type == 'free_cell' or tile_type == 'close_cell':
+            self.rect = self.image.get_rect().move(
+                tile_width_cell * pos_x, tile_height_cell * pos_y)
+        elif tile_type == 'free_right' or tile_type == 'Right_wall':
+            self.rect = self.image.get_rect().move(
+                tile_width_wall_right * pos_x, tile_height_wall_right * pos_y)
+        elif tile_type == 'free_down' or tile_type == 'Down_wall':
+            self.rect = self.image.get_rect().move(
+                tile_width_wall_down * pos_x, tile_height_wall_down * pos_y)
+        elif tile_type == 'dog':
+            self.rect = self.image.get_rect().move(
+                tile_width_cell * pos_x, tile_height_cell * pos_y)
 
 
 def generate_level(level):
     # new_player, x, y = None, None, None
     for y in range(len(level)):
         for x in range(len(level[y])):
-            if level[y][x] == '=':
-                Tile('empty', x, y)
-            elif level[y][x] == '#':
-                Tile('wall', x, y)
-            elif level[y][x] == '~':
-                Tile('inwall', x, y)
+            if level[y][x] == 'З':
+                Tile('free_cell', x, y)
+            elif level[y][x] == 'Ф':
+                Tile('close_cell', x, y)
+            elif level[y][x] == 'G':
+                Tile('free_right', x, y)
+            elif level[y][x] == 'Y':
+                Tile('Right_wall', x, y)
+            elif level[y][x] == 'g':
+                Tile('free_down', x, y)
+            elif level[y][x] == 'y':
+                Tile('Down_wall', x, y)
+            elif level[y][x] == '@':
+                Tile('dog', x, y)
             # elif level[y][x] == '@':
             #     Tile('empty', x, y)
             #     new_player = Player(x, y)
