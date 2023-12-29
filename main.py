@@ -1,7 +1,7 @@
 import os
 import random
 import sys
-
+from PIL import Image
 import pygame
 
 pygame.init()
@@ -9,12 +9,15 @@ size = width, height = 945, 630
 screen = pygame.display.set_mode(size)
 
 
-def load_image(name):
+def load_image(name, w=-1, h=-1):
     fullname = os.path.join('data', name)
     # если файл не существует, то выходим
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
+    # if w != -1 and h != -1:
+    #     im = Image.open()
+    #     im2 = im.resize((291, 171))
     image = pygame.image.load(fullname)
     return image
 
@@ -98,23 +101,24 @@ def load_level(filename):
 level = load_level('lvl1.txt')
 # print(level)
 
-
-tile_images = {
-    'Right_wall': load_image('textura_1_stena.jpg'),
-    'Down_wall': load_image('textura_1_stena.jpg'),
-    'free_cell': load_image('textura_1_pol.jpg'),
-    'free_right': load_image('textura_1_pol.jpg'),
-    'free_down': load_image('textura_1_pol.jpg'),
-    'close_cell': load_image('textura_1_V_stene.jpg'),
-    'dog': load_image('fon.jpg'),
-}
-# player_image = load_image('mar.png')
-
 tile_width_cell = tile_height_cell = 50
 tile_width_wall_right = 25
 tile_height_wall_right = 50
 tile_width_wall_down = 75
 tile_height_wall_down = 25
+
+
+tile_images = {
+    'Right_wall': load_image('textura_1_stena_right.jpg'),
+    'Down_wall': load_image('textura_1_stena_down.jpg'),
+    'free_cell': load_image('textura_1_pol.jpg'),
+    'free_right': load_image('textura_1_free_right.jpg'),
+    'free_down': load_image('textura_1_free_down.jpg'),
+    'close_cell': load_image('textura_1_V_stene.jpg'),
+    'free_corner': load_image('textura_1_free_corner.jpg'),
+    'corner_wall': load_image('textura_1_corner_wall.jpg')
+}
+# player_image = load_image('mar.png')
 
 
 class Tile(pygame.sprite.Sprite):
@@ -123,16 +127,16 @@ class Tile(pygame.sprite.Sprite):
         self.image = tile_images[tile_type]
         if tile_type == 'free_cell' or tile_type == 'close_cell':
             self.rect = self.image.get_rect().move(
-                tile_width_cell * pos_x, tile_height_cell * pos_y)
+                75 * (pos_x // 2), 75 * (pos_y // 2))
         elif tile_type == 'free_right' or tile_type == 'Right_wall':
             self.rect = self.image.get_rect().move(
-                tile_width_wall_right * pos_x, tile_height_wall_right * pos_y)
+                75 * (pos_x - pos_x // 2) - 25, 75 * (pos_y // 2))
         elif tile_type == 'free_down' or tile_type == 'Down_wall':
             self.rect = self.image.get_rect().move(
-                tile_width_wall_down * pos_x, tile_height_wall_down * pos_y)
-        elif tile_type == 'dog':
+                75 * (pos_x // 2), 75 * (pos_y - pos_y // 2) - 25)
+        elif tile_type == 'corner_wall' or tile_type == 'free_corner':
             self.rect = self.image.get_rect().move(
-                tile_width_cell * pos_x, tile_height_cell * pos_y)
+                75 * (pos_x - pos_x // 2) - 25, 75 * (pos_y - pos_y // 2) - 25)
 
 
 def generate_level(level):
@@ -151,11 +155,10 @@ def generate_level(level):
                 Tile('free_down', x, y)
             elif level[y][x] == 'y':
                 Tile('Down_wall', x, y)
-            elif level[y][x] == '@':
-                Tile('dog', x, y)
-            # elif level[y][x] == '@':
-            #     Tile('empty', x, y)
-            #     new_player = Player(x, y)
+            elif level[y][x] == 'p':
+                Tile('free_corner', x, y)
+            elif level[y][x] == 's':
+                Tile('corner_wall', x, y)
     # вернем игрока, а также размер поля в клетках
     # return new_player, x, y
     return x, y
@@ -164,7 +167,7 @@ def generate_level(level):
 tiles_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 print(0)
-level_x, level_y = generate_level(load_level('lvl1.txt'))
+level_x, level_y = generate_level(load_level('lvl2.txt'))
 running = True
 while running:
     for event in pygame.event.get():
