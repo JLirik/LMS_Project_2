@@ -15,9 +15,7 @@ def load_image(name, w=-1, h=-1):
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
-    # if w != -1 and h != -1:
-    #     im = Image.open()
-    #     im2 = im.resize((291, 171))
+
     image = pygame.image.load(fullname)
     return image
 
@@ -32,6 +30,7 @@ def terminate():
 
 
 def start_screen():  # Создание экрана
+    num = 0
     intro_text = [
         "Вы бегаете по лабиринту за пса",
         "и лопаете чупринчиков.",
@@ -43,43 +42,49 @@ def start_screen():  # Создание экрана
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 80)
 
-    pygame.draw.rect(screen, 'PeachPuff', [750, 500, 150, 75], border_radius=10)
-    string_rendered = font.render('Play', 1, pygame.Color('black'))
-    screen.blit(string_rendered, (770, 515))
+    pygame.draw.rect(screen, 'PeachPuff', [720, 500, 210, 75], border_radius=10)
+    string_rendered = font.render('Level 2', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (730, 515))
 
-    pygame.draw.rect(screen, 'PeachPuff', [550, 500, 175, 75], border_radius=10)
-    string_rendered = font.render('Rules', 1, pygame.Color('black'))
-    screen.blit(string_rendered, (560, 515))
+    pygame.draw.rect(screen, 'PeachPuff', [490, 500, 210, 75], border_radius=10)
+    string_rendered = font.render('Level 1', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (500, 515))
+
+    pygame.draw.rect(screen, 'PeachPuff', [490, 410, 440, 75], border_radius=10)
+    string_rendered = font.render('Правила игры', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (515, 425))
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if 750 < event.pos[0] < 900 and 500 < event.pos[1] < 575:
-                    return  # начинаем игру
-                if 550 < event.pos[0] < 700 and 500 < event.pos[1] < 575:
+                if 490 < event.pos[0] < 700 and 500 < event.pos[1] < 575:
+                    return 1  # start level 1
+                if 720 < event.pos[0] < 930 and 500 < event.pos[1] < 575:
+                    return 2  # start level 2
 
+                if 490 < event.pos[0] < 930 and 410 < event.pos[1] < 485:
                     text_font = pygame.font.Font(None, 30)
-                    pygame.draw.rect(screen, 'PeachPuff', [105, 420, 400, 155], border_radius=10)
+                    pygame.draw.rect(screen, 'PeachPuff', [50, 410, 400, 165], border_radius=10)
                     text_coord = 440
                     for line in intro_text:
                         string_rendered = text_font.render(line, 1, pygame.Color('black'))
                         intro_rect = string_rendered.get_rect()
                         text_coord += 10
                         intro_rect.top = text_coord
-                        intro_rect.x = 125
+                        intro_rect.x = 75
                         text_coord += intro_rect.height
                         screen.blit(string_rendered, intro_rect)
                     font = pygame.font.Font(None, 45)
-                    pygame.draw.rect(screen, 'LightSalmon', [115, 405, 150, 40], border_radius=10)
+                    pygame.draw.rect(screen, 'LightSalmon', [65, 395, 150, 40], border_radius=10)
                     string_rendered = font.render('Правила', 1, pygame.Color('black'))
-                    screen.blit(string_rendered, (125, 410))
+                    screen.blit(string_rendered, (75, 400))
         pygame.display.flip()
         clock.tick(FPS)
 
 
-start_screen()
+num = start_screen()
 
 
 def load_level(filename):
@@ -98,25 +103,22 @@ def load_level(filename):
     return level_map
 
 
-level = load_level('lvl1.txt')
+level = load_level(f'lvl{num}.txt')
 # print(level)
 
-tile_width_cell = tile_height_cell = 50
-tile_width_wall_right = 25
-tile_height_wall_right = 50
-tile_width_wall_down = 75
-tile_height_wall_down = 25
+cell_size = 75
+delta = 25
 
 
 tile_images = {
-    'Right_wall': load_image('textura_1_stena_right.jpg'),
-    'Down_wall': load_image('textura_1_stena_down.jpg'),
-    'free_cell': load_image('textura_1_pol.jpg'),
-    'free_right': load_image('textura_1_free_right.jpg'),
-    'free_down': load_image('textura_1_free_down.jpg'),
-    'close_cell': load_image('textura_1_V_stene.jpg'),
-    'free_corner': load_image('textura_1_free_corner.jpg'),
-    'corner_wall': load_image('textura_1_corner_wall.jpg')
+    'Right_wall': load_image('right_wall.png'),
+    'Down_wall': load_image('down_wall.png'),
+    'free_cell': load_image('road.png'),
+    'free_right': load_image('right_road.png'),
+    'free_down': load_image('down_road.png'),
+    'close_cell': load_image('wall.png'),
+    'free_corner': load_image('corner_road.png'),
+    'corner_wall': load_image('corner_wall.png')
 }
 # player_image = load_image('mar.png')
 
@@ -127,16 +129,16 @@ class Tile(pygame.sprite.Sprite):
         self.image = tile_images[tile_type]
         if tile_type == 'free_cell' or tile_type == 'close_cell':
             self.rect = self.image.get_rect().move(
-                75 * (pos_x // 2), 75 * (pos_y // 2))
+                cell_size * (pos_x // 2), cell_size * (pos_y // 2))
         elif tile_type == 'free_right' or tile_type == 'Right_wall':
             self.rect = self.image.get_rect().move(
-                75 * (pos_x - pos_x // 2) - 25, 75 * (pos_y // 2))
+                cell_size * (pos_x - pos_x // 2) - 25, cell_size * (pos_y // 2))
         elif tile_type == 'free_down' or tile_type == 'Down_wall':
             self.rect = self.image.get_rect().move(
-                75 * (pos_x // 2), 75 * (pos_y - pos_y // 2) - 25)
+                cell_size * (pos_x // 2), cell_size * (pos_y - pos_y // 2) - 25)
         elif tile_type == 'corner_wall' or tile_type == 'free_corner':
             self.rect = self.image.get_rect().move(
-                75 * (pos_x - pos_x // 2) - 25, 75 * (pos_y - pos_y // 2) - 25)
+                cell_size * (pos_x - pos_x // 2) - 25, cell_size * (pos_y - pos_y // 2) - 25)
 
 
 def generate_level(level):
@@ -167,7 +169,7 @@ def generate_level(level):
 tiles_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 print(0)
-level_x, level_y = generate_level(load_level('lvl2.txt'))
+level_x, level_y = generate_level(load_level(f'lvl{num}.txt'))
 running = True
 while running:
     for event in pygame.event.get():
