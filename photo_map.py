@@ -1,7 +1,7 @@
 from PIL import Image
 
 karta = []
-f = open('data\lvl2.txt', 'w')
+f = open('data\lvl1.txt', 'w')
 
 
 # rgb(200, 200, 16) - yellow
@@ -9,7 +9,7 @@ f = open('data\lvl2.txt', 'w')
 
 def board():
     global karta
-    im = Image.open("data\level2.png")
+    im = Image.open("data\level1.png")
     pixels = im.load()  # список с пикселями
     x, y = im.size  # ширина (x) и высота (y) изображения
     c = 0
