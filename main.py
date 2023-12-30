@@ -144,10 +144,18 @@ class Tile(pygame.sprite.Sprite):
                 self.image = tile_images['Down_wall']
                 self.rect = self.image.get_rect().move(
                     cell_size * (pos_x // 2), 0)
-            else:
+            elif pos_x == -1:
                 self.image = tile_images['Right_wall']
                 self.rect = self.image.get_rect().move(
                     0, cell_size * (pos_y // 2))
+            elif pos_y == -105:
+                self.image = tile_images['Down_wall']
+                self.rect = self.image.get_rect().move(
+                    cell_size * (pos_x // 2), 890 - delta)
+            elif pos_x == -105:
+                self.image = tile_images['Right_wall']
+                self.rect = self.image.get_rect().move(
+                    1500 - delta, cell_size * (pos_y // 2))
 
 
 class Player(pygame.sprite.Sprite):
@@ -181,10 +189,14 @@ def generate_level(level):
             elif level[y][x] == '@':
                 Tile('free_cell', x, y)
                 new_player = Player(x, y)
-    for i in range(21):  # Горизонтальная граница
+    for i in range(21):  # Горизонтальная граница Верхняя
         Tile('None', i, -1)
-    for i in range(21): # Вертикальная граница
+    for i in range(21):  # Вертикальная граница Левая
         Tile('None', -1, i)
+    for i in range(21):  # Горизонтальная граница Нижняя
+        Tile('None', i, -105)
+    for i in range(21):  # Вертикальная граница Правая
+        Tile('None', -105, i)
     # вернем игрока, а также размер поля в клетках
     return new_player, x, y
 
