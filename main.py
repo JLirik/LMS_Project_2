@@ -151,19 +151,26 @@ class Tile(pygame.sprite.Sprite):
             elif pos_y == -105:
                 self.image = tile_images['Down_wall']
                 self.rect = self.image.get_rect().move(
-                    cell_size * (pos_x // 2), 890 - delta)
+                    cell_size * (pos_x // 2), 6300)
             elif pos_x == -105:
                 self.image = tile_images['Right_wall']
                 self.rect = self.image.get_rect().move(
-                    1500 - delta, cell_size * (pos_y // 2))
+                    6300, cell_size * (pos_y // 2))
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(player_group, all_sprites)
         self.image = player_image
+        print(1)
         self.rect = self.image.get_rect().move(
-            cell_size * pos_x, cell_size * pos_y)
+            cell_size * (pos_x // 2) + delta, cell_size * (pos_y // 2) + delta)
+
+
+player = None
+tiles_group = pygame.sprite.Group()
+all_sprites = pygame.sprite.Group()
+player_group = pygame.sprite.Group()
 
 
 def generate_level(level):
@@ -189,6 +196,7 @@ def generate_level(level):
             elif level[y][x] == '@':
                 Tile('free_cell', x, y)
                 new_player = Player(x, y)
+                print('--1--')
     for i in range(21):  # Горизонтальная граница Верхняя
         Tile('None', i, -1)
     for i in range(21):  # Вертикальная граница Левая
@@ -201,25 +209,24 @@ def generate_level(level):
     return new_player, x, y
 
 
-tiles_group = pygame.sprite.Group()
-all_sprites = pygame.sprite.Group()
-player_group = pygame.sprite.Group()
 print(0)
 player, level_x, level_y = generate_level(load_level(f'lvl{num}.txt'))
 running = True
+a = Player(1, 1)
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        # if event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_LEFT and level[player.rect.y // 50][player.rect.x // 50 - 1] != '#':
-        #         player.rect.x -= 50
-        #     elif event.key == pygame.K_RIGHT and level[player.rect.y // 50][player.rect.x // 50 + 1] != '#':
-        #         player.rect.x += 50
-        #     elif event.key == pygame.K_UP and level[player.rect.y // 50 - 1][player.rect.x // 50] != '#':
-        #         player.rect.y -= 50
-        #     elif event.key == pygame.K_DOWN and level[player.rect.y // 50 + 1][player.rect.x // 50] != '#':
-        #         player.rect.y += 50
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT and level[player.rect.y // 50][player.rect.x // 50 - 1] != '#':
+                player.rect.x -= 50
+            elif event.key == pygame.K_RIGHT and level[player.rect.y // 50][player.rect.x // 50 + 1] != '#':
+                player.rect.x += 50
+            elif event.key == pygame.K_UP and level[player.rect.y // 50 - 1][player.rect.x // 50] != '#':
+                player.rect.y -= 50
+            elif event.key == pygame.K_DOWN and level[player.rect.y // 50 + 1][player.rect.x // 50] != '#':
+                player.rect.y += 50
 
     screen.fill(pygame.Color("white"))
     all_sprites.draw(screen)
