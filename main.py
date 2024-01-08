@@ -162,7 +162,6 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(player_group, all_sprites)
         self.image = player_image
-        print(1)
         self.rect = self.image.get_rect().move(
             cell_size * (pos_x // 2) + delta, cell_size * (pos_y // 2) + delta)
 
@@ -196,7 +195,6 @@ def generate_level(level):
             elif level[y][x] == '@':
                 Tile('free_cell', x, y)
                 new_player = Player(x, y)
-                print('--1--')
     for i in range(21):  # Горизонтальная граница Верхняя
         Tile('None', i, -1)
     for i in range(21):  # Вертикальная граница Левая
@@ -209,29 +207,26 @@ def generate_level(level):
     return new_player, x, y
 
 
-print(0)
 player, level_x, level_y = generate_level(load_level(f'lvl{num}.txt'))
 running = True
-a = Player(1, 1)
-
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT and level[player.rect.y // 50][player.rect.x // 50 - 1] != '#':
-                player.rect.x -= 50
-            elif event.key == pygame.K_RIGHT and level[player.rect.y // 50][player.rect.x // 50 + 1] != '#':
-                player.rect.x += 50
-            elif event.key == pygame.K_UP and level[player.rect.y // 50 - 1][player.rect.x // 50] != '#':
-                player.rect.y -= 50
-            elif event.key == pygame.K_DOWN and level[player.rect.y // 50 + 1][player.rect.x // 50] != '#':
-                player.rect.y += 50
+            if event.key == pygame.K_LEFT and level[(player.rect.y - 75) // 225 * 2][(player.rect.x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+                player.rect.x -= 225
+            elif event.key == pygame.K_RIGHT and level[(player.rect.y - 75) // 225 * 2][(player.rect.x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+                player.rect.x += 225
+            elif event.key == pygame.K_UP and level[(player.rect.y - 75) // 225 * 2 - 1][(player.rect.x - 75) // 225 * 2] not in ['Y', 'y']:
+                player.rect.y -= 225
+            elif event.key == pygame.K_DOWN and level[(player.rect.y - 75) // 225 * 2 + 1][(player.rect.x - 75) // 225 * 2] not in ['Y', 'y']:
+                player.rect.y += 225
 
     screen.fill(pygame.Color("white"))
     all_sprites.draw(screen)
     tiles_group.draw(screen)
-    # player_group.draw(screen)
+    player_group.draw(screen)
     pygame.display.flip()
     clock.tick(10)
 
