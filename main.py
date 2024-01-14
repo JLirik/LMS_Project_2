@@ -22,6 +22,7 @@ def load_image(name, w=-1, h=-1):
 
 
 clock = pygame.time.Clock()
+kills = 0
 FPS = 60
 
 
@@ -120,6 +121,7 @@ tile_images = {
     'corner_wall': load_image('3x_corner_wall.png')
 }
 player_image = load_image('Player_doge.png')
+ball_image = load_image('apple-1.png')
 
 
 class Tile(pygame.sprite.Sprite):
@@ -166,10 +168,51 @@ class Player(pygame.sprite.Sprite):
             cell_size * (pos_x // 2) + delta, cell_size * (pos_y // 2) + delta)
 
 
+class Balls(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y):
+        super().__init__(balls_group, all_sprites)
+        self.image = ball_image
+        self.rect = self.image.get_rect().move(
+            cell_size * pos_x + delta, cell_size * pos_y + delta)
+
+    def update(self):
+        lst = ['L', 'R', 'U', 'D']
+        direction = random.choice(lst)
+        if self.rect.x >= 0:
+            if direction == 'R' and level[(self.rect.y - 75) // 225 * 2][(self.rect.x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+                self.rect = self.rect.move(225, 0)
+            elif direction == 'L' and level[(self.rect.y - 75) // 225 * 2][(self.rect.x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+                self.rect = self.rect.move(-225, 0)
+            elif direction == 'D' and level[(self.rect.y - 75) // 225 * 2 + 1][(self.rect.x - 75) // 225 * 2] not in ['Y', 'y']:
+                self.rect = self.rect.move(0, 225)
+            elif direction == 'U' and level[(self.rect.y - 75) // 225 * 2 - 1][(self.rect.x - 75) // 225 * 2] not in ['Y', 'y']:
+                self.rect = self.rect.move(0, -225)
+        if pygame.sprite.collide_mask(self, player):
+            self.rect = self.rect.move(-1000000, -1000000)
+            print_kill(1)
+
+
 player = None
 tiles_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
+balls_group = pygame.sprite.Group()
+
+for i in range(20):
+    x = random.randint(0, 20)
+    y = random.randint(0, 20)
+    while level[y * 2][x * 2] != 'З':
+        x = random.randint(0, 20)
+        y = random.randint(0, 20)
+    Balls(x, y)
+
+
+def print_kill(n):
+    global kills
+    kills += n
+    font = pygame.font.Font(None, 120)
+    string_rendered = font.render(f'Kills: {kills}', 1, pygame.Color('Silver'))
+    screen.blit(string_rendered, (10, 10))
 
 
 def generate_level(level):
@@ -227,6 +270,9 @@ while running:
     all_sprites.draw(screen)
     tiles_group.draw(screen)
     player_group.draw(screen)
+    balls_group.draw(screen)
+    all_sprites.update()
+    print_kill(0)
     pygame.display.flip()
     clock.tick(10)
 
