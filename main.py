@@ -170,8 +170,8 @@ class Tile(pygame.sprite.Sprite):
 class Camera:
     # зададим начальный сдвиг камеры
     def __init__(self):
-        self.dx = player.rect.x
-        self.dy = player.rect.y
+        self.dx = 0
+        self.dy = 0
 
     # сдвинуть объект obj на смещение камеры
     def apply(self, obj):
@@ -288,6 +288,10 @@ kos_x = player.rect.x
 kos_y = player.rect.y
 camera = Camera()
 running = True
+camera.update(player)
+for sprite in all_sprites:
+    camera.apply(sprite)
+pygame.display.flip()
 while running:
     f = 0
     for event in pygame.event.get():
