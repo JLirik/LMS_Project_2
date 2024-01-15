@@ -144,19 +144,27 @@ class Tile(pygame.sprite.Sprite):
             if pos_y == -1:
                 self.image = tile_images['Down_wall']
                 self.rect = self.image.get_rect().move(
-                    cell_size * (pos_x // 2), 0)
+                    cell_size * pos_x, 0)
             elif pos_x == -1:
                 self.image = tile_images['Right_wall']
                 self.rect = self.image.get_rect().move(
-                    0, cell_size * (pos_y // 2))
+                    0, cell_size * pos_y)
             elif pos_y == -105:
                 self.image = tile_images['Down_wall']
                 self.rect = self.image.get_rect().move(
-                    cell_size * (pos_x // 2), 6300)
+                    cell_size * pos_y, 4725)
             elif pos_x == -105:
                 self.image = tile_images['Right_wall']
                 self.rect = self.image.get_rect().move(
-                    6300, cell_size * (pos_y // 2))
+                    4725, cell_size * pos_y)
+            elif pos_x == -1155 and pos_y == -1155:
+                self.image = tile_images['corner_wall']
+                self.rect = self.image.get_rect().move(
+                    4725, 0)
+            elif pos_x == -210 and pos_y == -210:
+                self.image = tile_images['corner_wall']
+                self.rect = self.image.get_rect().move(
+                    0, 4725)
 
 
 class Camera:
@@ -190,18 +198,24 @@ class Balls(pygame.sprite.Sprite):
         self.image = ball_image
         self.rect = self.image.get_rect().move(
             cell_size * pos_x + delta, cell_size * pos_y + delta)
+        self.sin_x = pos_x * cell_size + delta
+        self.sin_y = pos_y * cell_size + delta
 
     def update(self):
         lst = ['L', 'R', 'U', 'D']
         direction = random.choice(lst)
-        if self.rect.x >= 0:
-            if direction == 'R' and level[(self.rect.y - 75) // 225 * 2][(self.rect.x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+        if self.sin_x > 0:
+            if direction == 'R' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+                self.sin_x += 225
                 self.rect = self.rect.move(225, 0)
-            elif direction == 'L' and level[(self.rect.y - 75) // 225 * 2][(self.rect.x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+            elif direction == 'L' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+                self.sin_x -= 225
                 self.rect = self.rect.move(-225, 0)
-            elif direction == 'D' and level[(self.rect.y - 75) // 225 * 2 + 1][(self.rect.x - 75) // 225 * 2] not in ['Y', 'y']:
+            elif direction == 'D' and level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+                self.sin_y += 225
                 self.rect = self.rect.move(0, 225)
-            elif direction == 'U' and level[(self.rect.y - 75) // 225 * 2 - 1][(self.rect.x - 75) // 225 * 2] not in ['Y', 'y']:
+            elif direction == 'U' and level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+                self.sin_y -= 225
                 self.rect = self.rect.move(0, -225)
         if pygame.sprite.collide_mask(self, player):
             self.rect = self.rect.move(-1000000, -1000000)
@@ -214,13 +228,13 @@ all_sprites = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 balls_group = pygame.sprite.Group()
 
-# for i in range(20):
-#     x = random.randint(0, 20)
-#     y = random.randint(0, 20)
-#     while level[y * 2][x * 2] != 'З':
-#         x = random.randint(0, 20)
-#         y = random.randint(0, 20)
-#     Balls(x, y)
+for i in range(20):
+    x = random.randint(0, 20)
+    y = random.randint(0, 20)
+    while level[y * 2][x * 2] != 'З':
+        x = random.randint(0, 20)
+        y = random.randint(0, 20)
+    Balls(x, y)
 
 
 def print_kill(n):
@@ -262,6 +276,9 @@ def generate_level(level):
         Tile('None', i, -105)
     for i in range(21):  # Вертикальная граница Правая
         Tile('None', -105, i)
+    Tile('None', -210, -210)
+    Tile('None', -1155, -1155)
+
     # вернем игрока, а также размер поля в клетках
     return new_player, x, y
 
