@@ -1,7 +1,6 @@
 import os
 import random
 import sys
-from PIL import Image
 import pygame
 
 pygame.init()
@@ -160,6 +159,23 @@ class Tile(pygame.sprite.Sprite):
                     6300, cell_size * (pos_y // 2))
 
 
+class Camera:
+    # зададим начальный сдвиг камеры
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    # сдвинуть объект obj на смещение камеры
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+    # позиционировать камеру на объекте target
+    def update(self, target):
+        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2)
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(player_group, all_sprites)
@@ -198,13 +214,13 @@ all_sprites = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 balls_group = pygame.sprite.Group()
 
-for i in range(20):
-    x = random.randint(0, 20)
-    y = random.randint(0, 20)
-    while level[y * 2][x * 2] != 'З':
-        x = random.randint(0, 20)
-        y = random.randint(0, 20)
-    Balls(x, y)
+# for i in range(20):
+#     x = random.randint(0, 20)
+#     y = random.randint(0, 20)
+#     while level[y * 2][x * 2] != 'З':
+#         x = random.randint(0, 20)
+#         y = random.randint(0, 20)
+#     Balls(x, y)
 
 
 def print_kill(n):
@@ -251,20 +267,32 @@ def generate_level(level):
 
 
 player, level_x, level_y = generate_level(load_level(f'lvl{num}.txt'))
+kos_x = player.rect.x
+kos_y = player.rect.y
+camera = Camera()
 running = True
 while running:
+    f = 0
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT and level[(player.rect.y - 75) // 225 * 2][(player.rect.x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+            if event.key == pygame.K_LEFT and level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
                 player.rect.x -= 225
-            elif event.key == pygame.K_RIGHT and level[(player.rect.y - 75) // 225 * 2][(player.rect.x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+                kos_x -= 225
+                f = 1
+            elif event.key == pygame.K_RIGHT and level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
                 player.rect.x += 225
-            elif event.key == pygame.K_UP and level[(player.rect.y - 75) // 225 * 2 - 1][(player.rect.x - 75) // 225 * 2] not in ['Y', 'y']:
+                kos_x += 225
+                f = 1
+            elif event.key == pygame.K_UP and level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y']:
                 player.rect.y -= 225
-            elif event.key == pygame.K_DOWN and level[(player.rect.y - 75) // 225 * 2 + 1][(player.rect.x - 75) // 225 * 2] not in ['Y', 'y']:
+                kos_y -= 225
+                f = 1
+            elif event.key == pygame.K_DOWN and level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y']:
                 player.rect.y += 225
+                kos_y += 225
+                f = 1
 
     screen.fill(pygame.Color("white"))
     all_sprites.draw(screen)
@@ -273,6 +301,10 @@ while running:
     balls_group.draw(screen)
     all_sprites.update()
     print_kill(0)
+    if f == 1:
+        camera.update(player)
+        for sprite in all_sprites:
+            camera.apply(sprite)
     pygame.display.flip()
     clock.tick(10)
 
