@@ -2,11 +2,13 @@ import os
 import random
 import sys
 import pygame
+import time
 
 pygame.init()
 # size = width, height = 945, 630
-size = width, height = 1500, 890
+size = width, height = 1600, 890
 screen = pygame.display.set_mode(size)
+balls_count = 20
 
 
 def load_image(name, w=-1, h=-1):
@@ -31,6 +33,7 @@ def terminate():
 
 
 def start_screen():  # Создание экрана
+    global balls_count
     intro_text = [
         "Вы бегаете по лабиринту за пса",
         "и лопаете чупринчиков.",
@@ -54,6 +57,14 @@ def start_screen():  # Создание экрана
     string_rendered = font.render('Правила игры', 1, pygame.Color('black'))
     screen.blit(string_rendered, (772, 637))
 
+    pygame.draw.rect(screen, 'OliveDrab', [1420, 615, 150, 112], border_radius=10)
+    string_rendered = font.render('20', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (1448, 637))
+
+    pygame.draw.rect(screen, 'Salmon', [1420, 750, 150, 112], border_radius=10)
+    string_rendered = font.render('40', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (1448, 772))
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -64,21 +75,41 @@ def start_screen():  # Создание экрана
                 if 1080 < event.pos[0] < 1395 and 750 < event.pos[1] < 862:
                     return 2  # start level 2
 
+                if 1420 < event.pos[0] < 1550 and 615 < event.pos[1] < 727:
+                    pygame.draw.rect(screen, 'OliveDrab', [1420, 615, 150, 112], border_radius=10)
+                    string_rendered = font.render('20', 1, pygame.Color('black'))
+                    screen.blit(string_rendered, (1448, 637))
+
+                    pygame.draw.rect(screen, 'Salmon', [1420, 750, 150, 112], border_radius=10)
+                    string_rendered = font.render('40', 1, pygame.Color('black'))
+                    screen.blit(string_rendered, (1448, 772))
+                    balls_count = 20
+
+                if 1420 < event.pos[0] < 1550 and 750 < event.pos[1] < 862:
+                    pygame.draw.rect(screen, 'Salmon', [1420, 615, 150, 112], border_radius=10)
+                    string_rendered = font.render('20', 1, pygame.Color('black'))
+                    screen.blit(string_rendered, (1448, 637))
+
+                    pygame.draw.rect(screen, 'OliveDrab', [1420, 750, 150, 112], border_radius=10)
+                    string_rendered = font.render('40', 1, pygame.Color('black'))
+                    screen.blit(string_rendered, (1448, 772))
+                    balls_count = 40
+
                 if 735 < event.pos[0] < 1395 and 615 < event.pos[1] < 727:
-                    text_font = pygame.font.Font(None, 45)
+                    text_font_2 = pygame.font.Font(None, 45)
                     pygame.draw.rect(screen, 'PeachPuff', [75, 615, 600, 247], border_radius=10)
                     text_coord = 660
                     for line in intro_text:
-                        string_rendered = text_font.render(line, 1, pygame.Color('black'))
+                        string_rendered = text_font_2.render(line, 1, pygame.Color('black'))
                         intro_rect = string_rendered.get_rect()
                         text_coord += 15
                         intro_rect.top = text_coord
                         intro_rect.x = 112
                         text_coord += intro_rect.height
                         screen.blit(string_rendered, intro_rect)
-                    font = pygame.font.Font(None, 67)
+                    font_3 = pygame.font.Font(None, 67)
                     pygame.draw.rect(screen, 'LightSalmon', [97, 592, 225, 60], border_radius=10)
-                    string_rendered = font.render('Правила', 1, pygame.Color('black'))
+                    string_rendered = font_3.render('Правила', 1, pygame.Color('black'))
                     screen.blit(string_rendered, (112, 600))
         pygame.display.flip()
         clock.tick(FPS)
@@ -228,7 +259,7 @@ all_sprites = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 balls_group = pygame.sprite.Group()
 
-for i in range(20):
+for i in range(balls_count + int(balls_count * 0.5)):
     x = random.randint(0, 20)
     y = random.randint(0, 20)
     while level[y * 2][x * 2] != 'З':
@@ -238,10 +269,10 @@ for i in range(20):
 
 
 def print_kill(n):
-    global kills
+    global kills, balls_count
     kills += n
     font = pygame.font.Font(None, 120)
-    string_rendered = font.render(f'Kills: {kills}', 1, pygame.Color('Silver'))
+    string_rendered = font.render(f'Kills: {kills}/{balls_count}', 1, pygame.Color('Silver'))
     screen.blit(string_rendered, (10, 10))
 
 
@@ -322,6 +353,11 @@ while running:
     balls_group.draw(screen)
     all_sprites.update()
     print_kill(0)
+    if kills == balls_count:
+        pygame.display.flip()
+        time.sleep(0.5)
+        terminate()
+
     if f == 1:
         camera.update(player)
         for sprite in all_sprites:
