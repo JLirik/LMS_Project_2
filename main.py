@@ -118,6 +118,33 @@ def start_screen():  # Создание экрана
 num = start_screen()
 
 
+def chuprina_screen():
+    intro_text = ['Вы умерли']
+
+    fon = pygame.transform.scale(load_image('fon2.jpg'), (1000, 1000))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 50
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('black'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or \
+                    event.type == pygame.MOUSEBUTTONDOWN:
+                return  # начинаем игру
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
 def load_level(filename):
     filename = "data/" + filename
     # читаем уровень, убирая символы перевода строки
@@ -323,46 +350,53 @@ camera.update(player)
 for sprite in all_sprites:
     camera.apply(sprite)
 pygame.display.flip()
+
+
 while running:
-    f = 0
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT and level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
-                player.rect.x -= 225
-                kos_x -= 225
-                f = 1
-            elif event.key == pygame.K_RIGHT and level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
-                player.rect.x += 225
-                kos_x += 225
-                f = 1
-            elif event.key == pygame.K_UP and level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y']:
-                player.rect.y -= 225
-                kos_y -= 225
-                f = 1
-            elif event.key == pygame.K_DOWN and level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y']:
-                player.rect.y += 225
-                kos_y += 225
-                f = 1
+    barboss = True
+    start_screen()
+    while barboss:
+        camup = 0
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                barboss = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT and level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+                    player.rect.x -= 225
+                    kos_x -= 225
+                    camup = 1
+                elif event.key == pygame.K_RIGHT and level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+                    player.rect.x += 225
+                    kos_x += 225
+                    camup = 1
+                elif event.key == pygame.K_UP and level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y']:
+                    player.rect.y -= 225
+                    kos_y -= 225
+                    camup = 1
+                elif event.key == pygame.K_DOWN and level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y']:
+                    player.rect.y += 225
+                    kos_y += 225
+                    camup = 1
 
-    screen.fill(pygame.Color("white"))
-    all_sprites.draw(screen)
-    tiles_group.draw(screen)
-    player_group.draw(screen)
-    balls_group.draw(screen)
-    all_sprites.update()
-    print_kill(0)
-    if kills == balls_count:
+        screen.fill(pygame.Color("white"))
+        all_sprites.draw(screen)
+        tiles_group.draw(screen)
+        player_group.draw(screen)
+        balls_group.draw(screen)
+        all_sprites.update()
+        print_kill(0)
+        if kills == balls_count:
+            pygame.display.flip()
+            time.sleep(0.5)
+            barboss = False
+
+
+        if camup == 1:
+            camera.update(player)
+            for sprite in all_sprites:
+                camera.apply(sprite)
         pygame.display.flip()
-        time.sleep(0.5)
-        terminate()
-
-    if f == 1:
-        camera.update(player)
-        for sprite in all_sprites:
-            camera.apply(sprite)
-    pygame.display.flip()
-    clock.tick(10)
+        clock.tick(10)
 
 pygame.quit()
