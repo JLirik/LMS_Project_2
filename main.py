@@ -386,17 +386,18 @@ while running:
         balls_group.draw(screen)
         all_sprites.update()
         print_kill(0)
-        if kills == 1:
+        if kills == balls_count:
             pygame.display.flip()
             time.sleep(0.5)
             barboss = False
 
-        if camup == balls_count:
+        if camup == 1:
             camera.update(player)
             for sprite in all_sprites:
                 camera.apply(sprite)
         pygame.display.flip()
         clock.tick(10)
-    chuprina_screen()
+    if kills == balls_count:
+        chuprina_screen()
 
 pygame.quit()
