@@ -119,9 +119,9 @@ num = start_screen()
 
 
 def chuprina_screen():
-    intro_text = ['Вы умерли']
+    intro_text = ['Вы выиграли']
 
-    fon = pygame.transform.scale(load_image('fon2.jpg'), (1000, 1000))
+    fon = pygame.transform.scale(load_image('fon2.jpg'), (1600, 890))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 50
@@ -386,17 +386,17 @@ while running:
         balls_group.draw(screen)
         all_sprites.update()
         print_kill(0)
-        if kills == balls_count:
+        if kills == 1:
             pygame.display.flip()
             time.sleep(0.5)
             barboss = False
 
-
-        if camup == 1:
+        if camup == balls_count:
             camera.update(player)
             for sprite in all_sprites:
                 camera.apply(sprite)
         pygame.display.flip()
         clock.tick(10)
+    chuprina_screen()
 
 pygame.quit()
