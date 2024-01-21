@@ -1,8 +1,10 @@
+import math
 import os
 import random
 import sys
 import pygame
 import time
+import math
 
 pygame.init()
 # size = width, height = 945, 630
@@ -115,9 +117,6 @@ def start_screen():  # Создание экрана
         clock.tick(FPS)
 
 
-num = start_screen()
-
-
 def chuprina_screen():
     intro_text = ['Вы выиграли']
 
@@ -160,8 +159,6 @@ def load_level(filename):
 
     return level_map
 
-
-level = load_level(f'lvl{num}.txt')
 
 proportions = 3
 cell_size = 75 * proportions
@@ -280,21 +277,6 @@ class Balls(pygame.sprite.Sprite):
             print_kill(1)
 
 
-player = None
-tiles_group = pygame.sprite.Group()
-all_sprites = pygame.sprite.Group()
-player_group = pygame.sprite.Group()
-balls_group = pygame.sprite.Group()
-
-for i in range(balls_count + int(balls_count * 0.5)):
-    x = random.randint(0, 20)
-    y = random.randint(0, 20)
-    while level[y * 2][x * 2] != 'З':
-        x = random.randint(0, 20)
-        y = random.randint(0, 20)
-    Balls(x, y)
-
-
 def print_kill(n):
     global kills, balls_count
     kills += n
@@ -341,20 +323,36 @@ def generate_level(level):
     return new_player, x, y
 
 
-player, level_x, level_y = generate_level(load_level(f'lvl{num}.txt'))
-kos_x = player.rect.x
-kos_y = player.rect.y
-camera = Camera()
 running = True
-camera.update(player)
-for sprite in all_sprites:
-    camera.apply(sprite)
-pygame.display.flip()
-
-
 while running:
+    num = start_screen()
+    level = load_level(f'lvl{num}.txt')
+    player = None
+    tiles_group = pygame.sprite.Group()
+    all_sprites = pygame.sprite.Group()
+    player_group = pygame.sprite.Group()
+    balls_group = pygame.sprite.Group()
+
+    for i in range(balls_count + int(balls_count * 0.5)):
+        x = random.randint(0, 20)
+        y = random.randint(0, 20)
+        while level[y * 2][x * 2] != 'З':
+            x = random.randint(0, 20)
+            y = random.randint(0, 20)
+        Balls(x, y)
+
     barboss = True
-    start_screen()
+
+    player, level_x, level_y = generate_level(load_level(f'lvl{num}.txt'))
+    kos_x = player.rect.x
+    kos_y = player.rect.y
+    camera = Camera()
+    camera.update(player)
+    for sprite in all_sprites:
+        camera.apply(sprite)
+    pygame.display.flip()
+    to_x, to_y = 0, 0
+
     while barboss:
         camup = 0
         for event in pygame.event.get():
@@ -362,21 +360,33 @@ while running:
                 running = False
                 barboss = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT and level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
-                    player.rect.x -= 225
-                    kos_x -= 225
+                if event.key == pygame.K_LEFT and (((level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 - 1] not in ['Y', 'y'] or to_x != 0) and to_y == 0) or ((level[(kos_y - 75) // 225 * 2 + int(math.copysign(1, to_y))][(kos_x - 75) // 225 * 2 - 1] == 'p' or to_x != 0) and to_y != 0)):
+                    to_x -= 1
+                    if to_x == -9:
+                        to_x = 0
+                        kos_x -= 225
+                    player.rect.x -= 25
                     camup = 1
-                elif event.key == pygame.K_RIGHT and level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
-                    player.rect.x += 225
-                    kos_x += 225
+                elif event.key == pygame.K_RIGHT and (((level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 + 1] not in ['Y', 'y'] or to_x != 0) and to_y == 0) or ((level[(kos_y - 75) // 225 * 2 + int(math.copysign(1, to_y))][(kos_x - 75) // 225 * 2 + 1] == 'p' or to_x != 0) and to_y != 0)):
+                    to_x += 1
+                    if to_x == 9:
+                        to_x = 0
+                        kos_x += 225
+                    player.rect.x += 25
                     camup = 1
-                elif event.key == pygame.K_UP and level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y']:
-                    player.rect.y -= 225
-                    kos_y -= 225
+                elif event.key == pygame.K_UP and (((level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y'] or to_y != 0) and to_x == 0) or ((level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2 + int(math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
+                    to_y -= 1
+                    if to_y == -9:
+                        to_y = 0
+                        kos_y -= 225
+                    player.rect.y -= 25
                     camup = 1
-                elif event.key == pygame.K_DOWN and level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y']:
-                    player.rect.y += 225
-                    kos_y += 225
+                elif event.key == pygame.K_DOWN and (((level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y'] or to_y != 0) and to_x == 0) or ((level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2 + int(math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
+                    to_y += 1
+                    if to_y == 9:
+                        to_y = 0
+                        kos_y += 225
+                    player.rect.y += 25
                     camup = 1
 
         screen.fill(pygame.Color("white"))
@@ -387,11 +397,17 @@ while running:
         all_sprites.update()
         print_kill(0)
         if kills == balls_count:
+            all_sprites.draw(screen)
+            tiles_group.draw(screen)
+            player_group.draw(screen)
+            balls_group.draw(screen)
+            all_sprites.update()
             pygame.display.flip()
             time.sleep(0.5)
             barboss = False
 
         if camup == 1:
+            print(to_x, to_y)
             camera.update(player)
             for sprite in all_sprites:
                 camera.apply(sprite)
