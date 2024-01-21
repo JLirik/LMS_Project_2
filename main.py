@@ -399,5 +399,6 @@ while running:
         clock.tick(10)
     if kills == balls_count:
         chuprina_screen()
+        kills = 0
 
 pygame.quit()
