@@ -7,8 +7,9 @@ import time
 import math
 
 pygame.init()
+prop = 0.9
 # size = width, height = 945, 630
-size = width, height = 1600, 890
+size = width, height = 1600 * prop, 890 * prop
 screen = pygame.display.set_mode(size)
 balls_count = 20
 
@@ -45,74 +46,74 @@ def start_screen():  # Создание экрана
 
     fon = pygame.transform.scale(load_image('fon1.jpg'), size)
     screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 120)
+    font = pygame.font.Font(None, int(120 * prop))
 
-    pygame.draw.rect(screen, 'PeachPuff', [1080, 750, 315, 112], border_radius=10)
+    pygame.draw.rect(screen, 'PeachPuff', [1080 * prop, 750 * prop, int(315 * prop), int(112 * prop)], border_radius=10)
     string_rendered = font.render('Level 2', 1, pygame.Color('black'))
-    screen.blit(string_rendered, (1095, 772))
+    screen.blit(string_rendered, (int(1095 * prop), int(772 * prop)))
 
-    pygame.draw.rect(screen, 'PeachPuff', [735, 750, 315, 112], border_radius=10)
+    pygame.draw.rect(screen, 'PeachPuff', [int(735 * prop), int(750 * prop), int(315 * prop), int(112 * prop)], border_radius=10)
     string_rendered = font.render('Level 1', 1, pygame.Color('black'))
-    screen.blit(string_rendered, (750, 772))
+    screen.blit(string_rendered, (int(750 * prop), int(772 * prop)))
 
-    pygame.draw.rect(screen, 'PeachPuff', [735, 615, 660, 112], border_radius=10)
+    pygame.draw.rect(screen, 'PeachPuff', [int(735 * prop), int(615 * prop), int(660 * prop), int(112 * prop)], border_radius=10)
     string_rendered = font.render('Правила игры', 1, pygame.Color('black'))
-    screen.blit(string_rendered, (772, 637))
+    screen.blit(string_rendered, (int(772 * prop), int(637 * prop)))
 
-    pygame.draw.rect(screen, 'OliveDrab', [1420, 615, 150, 112], border_radius=10)
+    pygame.draw.rect(screen, 'OliveDrab', [int(1420 * prop), int(615 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
     string_rendered = font.render('20', 1, pygame.Color('black'))
-    screen.blit(string_rendered, (1448, 637))
+    screen.blit(string_rendered, (int(1448 * prop), int(637 * prop)))
 
-    pygame.draw.rect(screen, 'Salmon', [1420, 750, 150, 112], border_radius=10)
+    pygame.draw.rect(screen, 'Salmon', [int(1420 * prop), int(750 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
     string_rendered = font.render('40', 1, pygame.Color('black'))
-    screen.blit(string_rendered, (1448, 772))
+    screen.blit(string_rendered, (int(1448 * prop), int(772 * prop)))
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if 735 < event.pos[0] < 1050 and 750 < event.pos[1] < 862:
+                if int(735 * prop) < event.pos[0] < int(1050 * prop) and int(750 * prop) < event.pos[1] < int(862 * prop):
                     return 1  # start level 1
-                if 1080 < event.pos[0] < 1395 and 750 < event.pos[1] < 862:
+                if int(1080 * prop) < event.pos[0] < int(1395 * prop) and int(750 * prop) < event.pos[1] < int(862 * prop):
                     return 2  # start level 2
 
-                if 1420 < event.pos[0] < 1550 and 615 < event.pos[1] < 727:
-                    pygame.draw.rect(screen, 'OliveDrab', [1420, 615, 150, 112], border_radius=10)
+                if int(1420 * prop) < event.pos[0] < int(1550 * prop) and int(615 * prop) < event.pos[1] < int(727 * prop):
+                    pygame.draw.rect(screen, 'OliveDrab', [int(1420 * prop), int(615 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
                     string_rendered = font.render('20', 1, pygame.Color('black'))
-                    screen.blit(string_rendered, (1448, 637))
+                    screen.blit(string_rendered, (int(1448 * prop), int(637 * prop)))
 
-                    pygame.draw.rect(screen, 'Salmon', [1420, 750, 150, 112], border_radius=10)
+                    pygame.draw.rect(screen, 'Salmon', [int(1420 * prop), int(750 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
                     string_rendered = font.render('40', 1, pygame.Color('black'))
-                    screen.blit(string_rendered, (1448, 772))
+                    screen.blit(string_rendered, (int(1448 * prop), int(772 * prop)))
                     balls_count = 20
 
-                if 1420 < event.pos[0] < 1550 and 750 < event.pos[1] < 862:
-                    pygame.draw.rect(screen, 'Salmon', [1420, 615, 150, 112], border_radius=10)
+                if int(1420 * prop) < event.pos[0] < int(1550 * prop) and int(750 * prop) < event.pos[1] < int(862 * prop):
+                    pygame.draw.rect(screen, 'Salmon', [int(1420 * prop), int(615 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
                     string_rendered = font.render('20', 1, pygame.Color('black'))
-                    screen.blit(string_rendered, (1448, 637))
+                    screen.blit(string_rendered, (int(1448 * prop), int(637 * prop)))
 
-                    pygame.draw.rect(screen, 'OliveDrab', [1420, 750, 150, 112], border_radius=10)
+                    pygame.draw.rect(screen, 'OliveDrab', [int(1420 * prop), int(750 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
                     string_rendered = font.render('40', 1, pygame.Color('black'))
-                    screen.blit(string_rendered, (1448, 772))
+                    screen.blit(string_rendered, (int(1448 * prop), int(772 * prop)))
                     balls_count = 40
 
-                if 735 < event.pos[0] < 1395 and 615 < event.pos[1] < 727:
-                    text_font_2 = pygame.font.Font(None, 45)
-                    pygame.draw.rect(screen, 'PeachPuff', [75, 615, 600, 247], border_radius=10)
-                    text_coord = 660
+                if int(735 * prop) < event.pos[0] < int(1395 * prop) and int(615 * prop) < event.pos[1] < int(727 * prop):
+                    text_font_2 = pygame.font.Font(None, int(45 * prop))
+                    pygame.draw.rect(screen, 'PeachPuff', [int(75 * prop), int(615 * prop), int(600 * prop), int(247 * prop)], border_radius=10)
+                    text_coord = int(660 * prop)
                     for line in intro_text:
                         string_rendered = text_font_2.render(line, 1, pygame.Color('black'))
                         intro_rect = string_rendered.get_rect()
-                        text_coord += 15
+                        text_coord += int(15 * prop)
                         intro_rect.top = text_coord
-                        intro_rect.x = 112
+                        intro_rect.x = int(112 * prop)
                         text_coord += intro_rect.height
                         screen.blit(string_rendered, intro_rect)
-                    font_3 = pygame.font.Font(None, 67)
-                    pygame.draw.rect(screen, 'LightSalmon', [97, 592, 225, 60], border_radius=10)
+                    font_3 = pygame.font.Font(None, int(67 * prop))
+                    pygame.draw.rect(screen, 'LightSalmon', [int(97 * prop), int(592 * prop), int(225 * prop), int(60 * prop)], border_radius=10)
                     string_rendered = font_3.render('Правила', 1, pygame.Color('black'))
-                    screen.blit(string_rendered, (112, 600))
+                    screen.blit(string_rendered, (int(112 * prop), int(600 * prop)))
         pygame.display.flip()
         clock.tick(FPS)
 
