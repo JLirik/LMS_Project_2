@@ -5,6 +5,7 @@ import sys
 import pygame
 import time
 import math
+import moviepy.editor
 
 pygame.init()
 prop = 0.9
@@ -119,28 +120,44 @@ def start_screen():  # Создание экрана
 
 
 def chuprina_screen():
-    intro_text = ['Вы выиграли']
-
-    fon = pygame.transform.scale(load_image('fon2.jpg'), (1600, 890))
+    fon = pygame.transform.scale(load_image('fon2.jpg'), size)
+    pygame.mixer.music.load("data/toothless.mp3")
+    pygame.mixer.music.play(-1)
     screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 30)
-    text_coord = 50
-    for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('black'))
-        intro_rect = string_rendered.get_rect()
-        text_coord += 10
-        intro_rect.top = text_coord
-        intro_rect.x = 10
-        text_coord += intro_rect.height
-        screen.blit(string_rendered, intro_rect)
+    font = pygame.font.Font(None, int(175 * prop))
+
+    pygame.draw.rect(screen, 'PeachPuff', [320 * prop, 700 * prop, int(970 * prop), int(150 * prop)], border_radius=10)
+    string_rendered = font.render('Вы победили!!!', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (int(340 * prop), int(720 * prop)))
+
+    font = pygame.font.Font(None, int(80 * prop))
+    pygame.draw.rect(screen, 'PeachPuff', [20 * prop, 700 * prop, int(280 * prop), int(150 * prop)], border_radius=10)
+    string_rendered = font.render('Играть', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (int(70 * prop), int(720 * prop)))
+
+    string_rendered = font.render('снова', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (int(80 * prop), int(780 * prop)))
+
+    font = pygame.font.Font(None, int(120 * prop))
+    pygame.draw.rect(screen, 'PeachPuff', [(1310 * prop), (700 * prop), int(280 * prop), int(150 * prop)], border_radius=10)
+    string_rendered = font.render('Выйти', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (int(1320 * prop), int(740 * prop)))
 
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for event_1 in pygame.event.get():
+            if event_1.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.KEYDOWN or \
-                    event.type == pygame.MOUSEBUTTONDOWN:
-                return  # начинаем игру
+            elif event_1.type == pygame.MOUSEBUTTONDOWN:
+                if int(1310 * prop) < event_1.pos[0] < int(1590 * prop) and int(700 * prop) < event_1.pos[1] < int(850 * prop):
+                    terminate()
+                if int(20 * prop) < event_1.pos[0] < int(300 * prop) and int(700 * prop) < event_1.pos[1] < int(850 * prop):
+                    print(2)
+                    pygame.mixer.music.stop()
+                    return # start
+                if int(320 * prop) < event_1.pos[0] < int(1290 * prop) and int(700 * prop) < event_1.pos[1] < int(850 * prop):
+                    pass
+                    # video = moviepy.editor.VideoFileClip("data/video-fon1.mp4")
+                    # video.preview()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -256,23 +273,45 @@ class Balls(pygame.sprite.Sprite):
             cell_size * pos_x + delta, cell_size * pos_y + delta)
         self.sin_x = pos_x * cell_size + delta
         self.sin_y = pos_y * cell_size + delta
+        self.x_ball = 0
+        self.y_ball =0
 
     def update(self):
         lst = ['L', 'R', 'U', 'D']
         direction = random.choice(lst)
         if self.sin_x > 0:
-            if direction == 'R' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
-                self.sin_x += 225
-                self.rect = self.rect.move(225, 0)
-            elif direction == 'L' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
-                self.sin_x -= 225
-                self.rect = self.rect.move(-225, 0)
-            elif direction == 'D' and level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
-                self.sin_y += 225
-                self.rect = self.rect.move(0, 225)
-            elif direction == 'U' and level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
-                self.sin_y -= 225
-                self.rect = self.rect.move(0, -225)
+            if direction == 'L' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[
+                                                                (self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(
+                                                                                                                               self.sin_x - 75) // 225 * 2 - 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
+                self.x_ball -= 1
+                if self.x_ball == -9:
+                    self.x_ball = 0
+                    self.sin_x -= 225
+                self.rect.x -= 25
+            elif direction == 'R' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(
+                                                                                                                               self.sin_x - 75) // 225 * 2 + 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
+                self.x_ball += 1
+                if self.x_ball == 9:
+                    self.x_ball = 0
+                    self.sin_x += 225
+                self.rect.x += 25
+            elif direction == 'U' and (((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1,
+                                                                                                            self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
+                self.y_ball -= 1
+                if self.y_ball == -9:
+                    self.y_ball = 0
+                    self.sin_y -= 225
+                self.rect.y -= 25
+            elif direction == 'D' and (((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1,
+                                                                                                            self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
+                self.y_ball += 1
+                if self.y_ball == 9:
+                    self.y_ball = 0
+                    self.sin_y += 225
+                self.rect.y += 25
+
+
+
         if pygame.sprite.collide_mask(self, player):
             self.rect = self.rect.move(-1000000, -1000000)
             print_kill(1)
@@ -280,6 +319,7 @@ class Balls(pygame.sprite.Sprite):
 
 def print_kill(n):
     global kills, balls_count
+    kills = 20
     kills += n
     font = pygame.font.Font(None, 120)
     string_rendered = font.render(f'Kills: {kills}/{balls_count}', 1, pygame.Color('Silver'))
@@ -408,7 +448,6 @@ while running:
             barboss = False
 
         if camup == 1:
-            print(to_x, to_y)
             camera.update(player)
             for sprite in all_sprites:
                 camera.apply(sprite)
