@@ -275,35 +275,151 @@ class Balls(pygame.sprite.Sprite):
         self.sin_y = pos_y * cell_size + delta
         self.x_ball = 0
         self.y_ball =0
+        self.between_wall = False
+        self.hero_x = ''
+        self.hero_y = ''
+        self.lst = ['L', 'R', 'U', 'D']
+        self.direction = random.choice(self.lst)
+        self.last_action = ''
+
+    def runaway(self):
+        if self.direction == 'D' and level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y']:
+            if level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+                self.direction = 'L'
+            elif level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+                self.direction = 'R'
+
+        if self.direction == 'U' and level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y']:
+            if level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+                self.direction = 'L'
+            elif level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+                self.direction = 'R'
+
+
+        if self.direction == 'L' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] in ['Y', 'y']:
+            if level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+                self.direction = 'U'
+            elif level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+                self.direction = 'D'
+
+        if self.direction == 'R' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] in ['Y', 'y']:
+            if level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+                self.direction = 'U'
+            elif level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+                self.direction = 'D'
+
+        if self.direction == 'R':
+            self.last_action = 'L'
+        elif self.direction == 'L':
+            self.last_action = 'R'
+        elif self.direction == 'U':
+            self.last_action = 'D'
+        elif self.direction == 'D':
+            self.last_action = 'U'
+
+        return self.direction
+    def jump(self):
+        pass
 
     def update(self):
-        lst = ['L', 'R', 'U', 'D']
-        direction = random.choice(lst)
+
+        if self.x_ball == 0 and self.y_ball == 0:
+            self.direction = random.choice(self.lst)
+            while self.direction == self.last_action:
+                self.direction = random.choice(self.lst)
+
+        if abs(self.sin_x - kos_x) < 450 or abs(self.sin_y - kos_y) < 450:
+            self.between_wall = False
+
+            if (self.sin_x - 75) // 225 - (kos_x - 75) // 225 < 0:
+                self.hero_x = 'R'
+            elif (self.sin_x - 75) // 225 - (kos_x - 75) // 225 > 0:
+                self.hero_x = 'L'
+            else:
+                self.hero_x = 'on_line'
+
+            if (self.sin_y - 75) // 225 - (kos_y - 75) // 225 < 0:
+                self.hero_y = 'D'
+            elif (self.sin_y - 75) // 225 - (kos_y - 75) // 225 > 0:
+                self.hero_y = 'U'
+            else:
+                self.hero_y = 'on_line'
+
+            dukky_x = kos_x
+            dukky_y = kos_y
+            if to_x >= 5:
+                dukky_x = kos_x + 225
+            elif -4 <= to_x <= 4:
+                dukky_x = kos_x
+            elif to_x <= -5:
+                dukky_x = kos_x - 255
+
+            if to_y >= 5:
+                dukky_y = kos_y + 225
+            elif -4 <= to_y <= 4:
+                dukky_y = kos_y
+            elif to_y <= -5:
+                dukky_y = kos_y - 255
+
+            if self.hero_x == 'on_line':
+                if self.hero_y == 'D':
+                    for y_wall in range((self.sin_y - 75) // 225 * 2, (dukky_y - 75) // 225 * 2):
+                        if level[y_wall][(self.sin_x - 75) // 225 * 2] == 'y':
+                            self.between_wall = True
+                            break
+                    if self.between_wall is False:
+                        self.direction = 'U'
+
+                if self.hero_y == 'U':
+                    for y_wall in range((dukky_y - 75) // 225 * 2, (self.sin_y - 75) // 225 * 2):
+                        if level[y_wall][(self.sin_x - 75) // 225 * 2] == 'y':
+                            self.between_wall = True
+                            break
+                    if self.between_wall is False:
+                        self.direction = 'D'
+
+
+            if self.hero_y == 'on_line':
+                if self.hero_x == 'L':
+                    for x_wall in range((self.sin_x - 75) // 225 * 2, (dukky_x - 75) // 225 * 2):
+                        if level[(self.sin_y - 75) // 225 * 2][x_wall] == 'Y':
+                            self.between_wall = True
+                            break
+                    if self.between_wall is False:
+                        self.direction = 'R'
+
+                if self.hero_x == 'R':
+                    for x_wall in range((dukky_x - 75) // 225 * 2, (self.sin_x - 75) // 225 * 2):
+                        if level[(self.sin_y - 75) // 225 * 2][x_wall] == 'Y':
+                            self.between_wall = True
+                            break
+                    if self.between_wall is False:
+                        self.direction = 'L'
+
+
+            if self.between_wall is False:
+                self.direction = self.runaway()
+
         if self.sin_x > 0:
-            if direction == 'L' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[
-                                                                (self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(
-                                                                                                                               self.sin_x - 75) // 225 * 2 - 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
+            if self.direction == 'L' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(self.sin_x - 75) // 225 * 2 - 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
                 self.x_ball -= 1
                 if self.x_ball == -9:
                     self.x_ball = 0
                     self.sin_x -= 225
                 self.rect.x -= 25
-            elif direction == 'R' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(
-                                                                                                                               self.sin_x - 75) // 225 * 2 + 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
+            elif self.direction == 'R' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(self.sin_x - 75) // 225 * 2 + 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
                 self.x_ball += 1
                 if self.x_ball == 9:
                     self.x_ball = 0
                     self.sin_x += 225
                 self.rect.x += 25
-            elif direction == 'U' and (((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1,
-                                                                                                            self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
+            elif self.direction == 'U' and (((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1, self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
                 self.y_ball -= 1
                 if self.y_ball == -9:
                     self.y_ball = 0
                     self.sin_y -= 225
                 self.rect.y -= 25
-            elif direction == 'D' and (((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1,
-                                                                                                            self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
+            elif self.direction == 'D' and (((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1, self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
                 self.y_ball += 1
                 if self.y_ball == 9:
                     self.y_ball = 0
@@ -319,7 +435,6 @@ class Balls(pygame.sprite.Sprite):
 
 def print_kill(n):
     global kills, balls_count
-    kills = 20
     kills += n
     font = pygame.font.Font(None, 120)
     string_rendered = font.render(f'Kills: {kills}/{balls_count}', 1, pygame.Color('Silver'))
