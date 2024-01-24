@@ -13,6 +13,8 @@ prop = 0.9
 size = width, height = 1600 * prop, 890 * prop
 screen = pygame.display.set_mode(size)
 balls_count = 20
+lives = 3
+
 
 
 def load_image(name, w=-1, h=-1):
@@ -119,15 +121,21 @@ def start_screen():  # Создание экрана
         clock.tick(FPS)
 
 
-def chuprina_screen():
-    fon = pygame.transform.scale(load_image('fon2.jpg'), size)
-    pygame.mixer.music.load("data/toothless.mp3")
+def chuprina_screen(result):
+    if result == 'win':
+        fon = pygame.transform.scale(load_image('fon2.jpg'), size)
+        pygame.mixer.music.load("data/toothless.mp3")
+        text = 'Вы победили!!!'
+    else:
+        fon = pygame.transform.scale(load_image('fon3.jpg'), size)
+        pygame.mixer.music.load("data/sad_violin.mp3")
+        text = 'Ты проиграл!!!!'
     pygame.mixer.music.play(-1)
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, int(175 * prop))
 
     pygame.draw.rect(screen, 'PeachPuff', [320 * prop, 700 * prop, int(970 * prop), int(150 * prop)], border_radius=10)
-    string_rendered = font.render('Вы победили!!!', 1, pygame.Color('black'))
+    string_rendered = font.render(text, 1, pygame.Color('black'))
     screen.blit(string_rendered, (int(340 * prop), int(720 * prop)))
 
     font = pygame.font.Font(None, int(80 * prop))
@@ -194,6 +202,7 @@ tile_images = {
 }
 player_image = load_image('Player_doge.png')
 ball_image = load_image('apple-1.png')
+life_image = load_image('bonus_life.png')
 
 
 class Tile(pygame.sprite.Sprite):
@@ -265,6 +274,19 @@ class Player(pygame.sprite.Sprite):
             cell_size * (pos_x // 2) + delta, cell_size * (pos_y // 2) + delta)
 
 
+class Life(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y):
+        super().__init__(life_group, all_sprites)
+        self.image = life_image
+        self.rect = self.image.get_rect().move(
+            cell_size * pos_x + delta, cell_size * pos_y + delta)
+
+    def update(self):
+        if pygame.sprite.collide_mask(self, player):
+            self.rect = self.rect.move(-1000000, -1000000)
+            print_life(1)
+
+
 class Balls(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(balls_group, all_sprites)
@@ -278,34 +300,39 @@ class Balls(pygame.sprite.Sprite):
         self.between_wall = False
         self.hero_x = ''
         self.hero_y = ''
+        self.dukky_x = 0
+        self.dukky_y = 0
+        self.grib_x = 0
+        self.grib_y = 0
         self.lst = ['L', 'R', 'U', 'D']
         self.direction = random.choice(self.lst)
+        self.air = ''
         self.last_action = ''
 
     def runaway(self):
-        if self.direction == 'D' and level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y']:
-            if level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+        if self.direction == 'D' and level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y', 's']:
+            if level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y', 's']:
                 self.direction = 'L'
-            elif level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+            elif level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y', 's']:
                 self.direction = 'R'
 
-        if self.direction == 'U' and level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y']:
-            if level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y']:
+        if self.direction == 'U' and level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y', 's']:
+            if level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y', 's']:
                 self.direction = 'L'
-            elif level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y']:
+            elif level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y', 's']:
                 self.direction = 'R'
 
 
-        if self.direction == 'L' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] in ['Y', 'y']:
-            if level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+        if self.direction == 'L' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] in ['Y', 'y', 's']:
+            if level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
                 self.direction = 'U'
-            elif level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+            elif level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
                 self.direction = 'D'
 
-        if self.direction == 'R' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] in ['Y', 'y']:
-            if level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+        if self.direction == 'R' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] in ['Y', 'y', 's']:
+            if level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
                 self.direction = 'U'
-            elif level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y']:
+            elif level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
                 self.direction = 'D'
 
         if self.direction == 'R':
@@ -319,7 +346,44 @@ class Balls(pygame.sprite.Sprite):
 
         return self.direction
     def jump(self):
-        pass
+        print(1)
+        if self.x_ball > 0:
+            self.direction = 'D'
+        if self.x_ball < 0:
+            self.direction = 'U'
+        if self.y_ball > 0:
+            self.direction = 'L'
+        if self.y_ball < 0:
+            self.direction = 'R'
+
+        if self.x_ball == 0 and self.y_ball == 0:
+            self.air = random.choice(self.lst)
+            f = 0
+            while f != 1:
+                if not(self.air == self.hero_x or self.air == self.hero_y):
+                    if self.direction == 'D' and level[(self.sin_y - 75) // 225 * 2 + 1][
+                        (self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
+                        f = 1
+                        self.rect.move(0, 225)
+                        self.sin_y += 225
+                    if self.direction == 'U' and level[(self.sin_y - 75) // 225 * 2 - 1][
+                        (self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
+                        f = 1
+                        self.rect.move(0, -225)
+                        self.sin_y -= 225
+                    if self.direction == 'L' and level[(self.sin_y - 75) // 225 * 2][
+                        (self.sin_x - 75) // 225 * 2 - 1] in ['Y', 'y', 's']:
+                        f = 1
+                        self.rect.move(-225, 0)
+                        self.sin_x -= 225
+                    if self.direction == 'R' and level[(self.sin_y - 75) // 225 * 2][
+                        (self.sin_x - 75) // 225 * 2 + 1] in ['Y', 'y', 's']:
+                        f = 1
+                        self.rect.move(225, 0)
+                        self.sin_x += 225
+
+
+
 
     def update(self):
 
@@ -327,53 +391,76 @@ class Balls(pygame.sprite.Sprite):
             self.direction = random.choice(self.lst)
             while self.direction == self.last_action:
                 self.direction = random.choice(self.lst)
-
-        if abs(self.sin_x - kos_x) < 450 or abs(self.sin_y - kos_y) < 450:
+        # if abs((self.sin_x - 75) // 225 - (kos_x - 75) // 225) <= 1 and abs((self.sin_y - 75) // 225 - (kos_y - 75) // 225) <= 1:
+        #     self.jump()
+        if abs((self.sin_x - 75) // 225 - (kos_x - 75) // 225) < 3 and abs((self.sin_y - 75) // 225 - (kos_y - 75) // 225) < 3:
             self.between_wall = False
 
-            if (self.sin_x - 75) // 225 - (kos_x - 75) // 225 < 0:
+
+
+            self.dukky_x = kos_x
+            self.dukky_y = kos_y
+            if to_x >= 5:
+                self.dukky_x = kos_x + 225
+            elif -4 <= to_x <= 4:
+                self.dukky_x = kos_x
+            elif to_x <= -5:
+                self.dukky_x = kos_x - 225
+
+            if to_y >= 5:
+                self.dukky_y = kos_y + 225
+            elif -4 <= to_y <= 4:
+                self.dukky_y = kos_y
+            elif to_y <= -5:
+                self.dukky_y = kos_y - 225
+
+
+            self.grib_x = self.sin_x
+            self.grib_y = self.sin_y
+            if self.x_ball >= 8:
+                self.grib_x = self.sin_x + 225
+            elif -7 <= self.x_ball <= 7:
+                self.grib_x = self.sin_x
+            elif self.x_ball <= -8:
+                self.grib_x = self.sin_x - 225
+
+            if self.y_ball >= 8:
+                self.grib_y = self.sin_y + 225
+            elif -7 <= self.y_ball <= 7:
+                self.grib_y = self.sin_y
+            elif self.y_ball <= -8:
+                self.grib_y = self.sin_y - 225
+
+
+            if (self.grib_x - 75) // 225 - (self.dukky_x - 75) // 225 < 0:
                 self.hero_x = 'R'
-            elif (self.sin_x - 75) // 225 - (kos_x - 75) // 225 > 0:
+            elif (self.grib_x - 75) // 225 - (self.dukky_x - 75) // 225 > 0:
                 self.hero_x = 'L'
             else:
                 self.hero_x = 'on_line'
 
-            if (self.sin_y - 75) // 225 - (kos_y - 75) // 225 < 0:
+            if (self.grib_y - 75) // 225 - (self.dukky_y - 75) // 225 < 0:
                 self.hero_y = 'D'
-            elif (self.sin_y - 75) // 225 - (kos_y - 75) // 225 > 0:
+            elif (self.grib_y - 75) // 225 - (self.dukky_y - 75) // 225 > 0:
                 self.hero_y = 'U'
             else:
                 self.hero_y = 'on_line'
 
-            dukky_x = kos_x
-            dukky_y = kos_y
-            if to_x >= 5:
-                dukky_x = kos_x + 225
-            elif -4 <= to_x <= 4:
-                dukky_x = kos_x
-            elif to_x <= -5:
-                dukky_x = kos_x - 255
-
-            if to_y >= 5:
-                dukky_y = kos_y + 225
-            elif -4 <= to_y <= 4:
-                dukky_y = kos_y
-            elif to_y <= -5:
-                dukky_y = kos_y - 255
-
             if self.hero_x == 'on_line':
                 if self.hero_y == 'D':
-                    for y_wall in range((self.sin_y - 75) // 225 * 2, (dukky_y - 75) // 225 * 2):
-                        if level[y_wall][(self.sin_x - 75) // 225 * 2] == 'y':
+                    for y_wall in range((self.grib_y - 75) // 225 * 2, (self.dukky_y - 75) // 225 * 2):
+                        if level[y_wall][(self.grib_x - 75) // 225 * 2] in ['Y', 'y']:
                             self.between_wall = True
+                            self.direction = 'D'
                             break
                     if self.between_wall is False:
                         self.direction = 'U'
 
                 if self.hero_y == 'U':
-                    for y_wall in range((dukky_y - 75) // 225 * 2, (self.sin_y - 75) // 225 * 2):
-                        if level[y_wall][(self.sin_x - 75) // 225 * 2] == 'y':
+                    for y_wall in range((self.dukky_y - 75) // 225 * 2, (self.grib_y - 75) // 225 * 2):
+                        if level[y_wall][(self.grib_x - 75) // 225 * 2] in ['Y', 'y']:
                             self.between_wall = True
+                            self.direction = 'U'
                             break
                     if self.between_wall is False:
                         self.direction = 'D'
@@ -381,17 +468,19 @@ class Balls(pygame.sprite.Sprite):
 
             if self.hero_y == 'on_line':
                 if self.hero_x == 'L':
-                    for x_wall in range((self.sin_x - 75) // 225 * 2, (dukky_x - 75) // 225 * 2):
-                        if level[(self.sin_y - 75) // 225 * 2][x_wall] == 'Y':
+                    for x_wall in range((self.dukky_x - 75) // 225 * 2, (self.grib_x - 75) // 225 * 2):
+                        if level[(self.grib_y - 75) // 225 * 2][x_wall] in ['Y', 'y']:
                             self.between_wall = True
+                            self.direction = 'L'
                             break
                     if self.between_wall is False:
                         self.direction = 'R'
 
                 if self.hero_x == 'R':
-                    for x_wall in range((dukky_x - 75) // 225 * 2, (self.sin_x - 75) // 225 * 2):
-                        if level[(self.sin_y - 75) // 225 * 2][x_wall] == 'Y':
+                    for x_wall in range((self.grib_x - 75) // 225 * 2, (self.dukky_x - 75) // 225 * 2):
+                        if level[(self.grib_y - 75) // 225 * 2][x_wall] in ['Y', 'y']:
                             self.between_wall = True
+                            self.direction = 'R'
                             break
                     if self.between_wall is False:
                         self.direction = 'L'
@@ -399,46 +488,78 @@ class Balls(pygame.sprite.Sprite):
 
             if self.between_wall is False:
                 self.direction = self.runaway()
+            else:
+                if self.hero_x == 'R' and self.hero_y == 'on_line' and (self.dukky_x - 75) // 225 * 2 == (self.grib_x - 75) // 225 * 2 + 2 and level[(self.grib_y - 75) // 225 * 2][(self.grib_x - 75) // 225 * 2 + 1] in ['Y', 'y']:
+                    self.rect.x -= 100000
+                    self.sin_x -= 10000000
+                    print('U were killed by CHUPRINA - right')
+                    print_life(-1)
+                if self.hero_x == 'L' and self.hero_y == 'on_line' and (self.dukky_x - 75) // 225 * 2 == (self.grib_x - 75) // 225 * 2 - 2 and level[(self.grib_y - 75) // 225 * 2][(self.grib_x - 75) // 225 * 2 - 1] in ['Y', 'y']:
+                    self.rect.x -= 1000000
+                    self.sin_x -= 1000000
+                    print('U were killed by CHUPRINA - left')
+                    print_life(-1)
+
+                if self.hero_x == 'on_line' and self.hero_y == 'D' and (self.dukky_y - 75) // 225 * 2 == (self.grib_y - 75) // 225 * 2 + 2 and level[(self.grib_y - 75) // 225 * 2 + 1][(self.grib_x - 75) // 225 * 2] in ['Y', 'y']:
+                    self.rect.x -= 100000
+                    self.sin_x -= 1000000
+                    print('U were killed by CHUPRINA - down')
+                    print_life(-1)
+
+                if self.hero_x == 'on_line' and self.hero_y == 'U' and (self.dukky_y - 75) // 225 * 2 == (self.grib_y - 75) // 225 * 2 - 2 and level[(self.grib_y - 75) // 225 * 2 - 1][(self.grib_x - 75) // 225 * 2] in ['Y', 'y']:
+                    self.rect.x -= 1000000
+                    self.sin_x -= 1000000
+                    print('U were killed by CHUPRINA - up')
+                    print_life(-1)
 
         if self.sin_x > 0:
             if self.direction == 'L' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(self.sin_x - 75) // 225 * 2 - 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
                 self.x_ball -= 1
-                if self.x_ball == -9:
+                if self.x_ball == -15:
                     self.x_ball = 0
                     self.sin_x -= 225
-                self.rect.x -= 25
+                self.rect.x -= 15
             elif self.direction == 'R' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(self.sin_x - 75) // 225 * 2 + 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
                 self.x_ball += 1
-                if self.x_ball == 9:
+                if self.x_ball == 15:
                     self.x_ball = 0
                     self.sin_x += 225
-                self.rect.x += 25
+                self.rect.x += 15
             elif self.direction == 'U' and (((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1, self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
                 self.y_ball -= 1
-                if self.y_ball == -9:
+                if self.y_ball == -15:
                     self.y_ball = 0
                     self.sin_y -= 225
-                self.rect.y -= 25
+                self.rect.y -= 15
             elif self.direction == 'D' and (((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1, self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
                 self.y_ball += 1
-                if self.y_ball == 9:
+                if self.y_ball == 15:
                     self.y_ball = 0
                     self.sin_y += 225
-                self.rect.y += 25
+                self.rect.y += 15
 
 
 
         if pygame.sprite.collide_mask(self, player):
             self.rect = self.rect.move(-1000000, -1000000)
+            self.sin_x, self.sin_y = -10000000, -10000000
             print_kill(1)
 
 
 def print_kill(n):
     global kills, balls_count
     kills += n
-    font = pygame.font.Font(None, 120)
+    font = pygame.font.Font(None, 100)
     string_rendered = font.render(f'Kills: {kills}/{balls_count}', 1, pygame.Color('Silver'))
     screen.blit(string_rendered, (10, 10))
+
+
+def print_life(n):
+    global lives
+    lives += n
+    font = pygame.font.Font(None, 100)
+    string_rendered = font.render(f'Lives: {lives}', 1, pygame.Color('Silver'))
+    screen.blit(string_rendered, (1130, 10))
 
 
 def generate_level(level):
@@ -488,6 +609,7 @@ while running:
     all_sprites = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
     balls_group = pygame.sprite.Group()
+    life_group = pygame.sprite.Group()
 
     for i in range(balls_count + int(balls_count * 0.5)):
         x = random.randint(0, 20)
@@ -496,6 +618,16 @@ while running:
             x = random.randint(0, 20)
             y = random.randint(0, 20)
         Balls(x, y)
+
+    life_lst = []
+    for i in range(balls_count // 20 * 6):
+        x = random.randint(0, 20)
+        y = random.randint(0, 20)
+        while level[y * 2][x * 2] != 'З' and (x, y) not in life_lst:
+            x = random.randint(0, 20)
+            y = random.randint(0, 20)
+        life_lst.append((x, y))
+        Life(x, y)
 
     barboss = True
 
@@ -550,8 +682,10 @@ while running:
         tiles_group.draw(screen)
         player_group.draw(screen)
         balls_group.draw(screen)
+        life_group.draw(screen)
         all_sprites.update()
         print_kill(0)
+        print_life(0)
         if kills == balls_count:
             all_sprites.draw(screen)
             tiles_group.draw(screen)
@@ -562,6 +696,9 @@ while running:
             time.sleep(0.5)
             barboss = False
 
+        if lives <= 0:
+            barboss = False
+
         if camup == 1:
             camera.update(player)
             for sprite in all_sprites:
@@ -569,7 +706,10 @@ while running:
         pygame.display.flip()
         clock.tick(10)
     if kills == balls_count:
-        chuprina_screen()
+        chuprina_screen('win')
         kills = 0
+    if lives == 0:
+        chuprina_screen('lose')
+        lives = 3
 
 pygame.quit()
