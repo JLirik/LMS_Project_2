@@ -799,8 +799,10 @@ while running:
     if kills == balls_count:
         chuprina_screen('win')
         kills = 0
+        lives = 3
     if lives == 0:
         chuprina_screen('lose')
+        kills = 0
         lives = 3
 
 pygame.quit()
