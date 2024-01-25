@@ -14,7 +14,6 @@ balls_count = 20
 lives = 3
 
 
-
 def load_image(name, w=-1, h=-1):
     fullname = os.path.join('data', name)
     # если файл не существует, то выходим
@@ -53,19 +52,23 @@ def start_screen():  # Создание экрана
     string_rendered = font.render('Level 2', 1, pygame.Color('black'))
     screen.blit(string_rendered, (int(1095 * prop), int(772 * prop)))
 
-    pygame.draw.rect(screen, 'PeachPuff', [int(735 * prop), int(750 * prop), int(315 * prop), int(112 * prop)], border_radius=10)
+    pygame.draw.rect(screen, 'PeachPuff', [int(735 * prop), int(750 * prop), int(315 * prop), int(112 * prop)],
+                     border_radius=10)
     string_rendered = font.render('Level 1', 1, pygame.Color('black'))
     screen.blit(string_rendered, (int(750 * prop), int(772 * prop)))
 
-    pygame.draw.rect(screen, 'PeachPuff', [int(735 * prop), int(615 * prop), int(660 * prop), int(112 * prop)], border_radius=10)
+    pygame.draw.rect(screen, 'PeachPuff', [int(735 * prop), int(615 * prop), int(660 * prop), int(112 * prop)],
+                     border_radius=10)
     string_rendered = font.render('Правила игры', 1, pygame.Color('black'))
     screen.blit(string_rendered, (int(772 * prop), int(637 * prop)))
 
-    pygame.draw.rect(screen, 'OliveDrab', [int(1420 * prop), int(615 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
+    pygame.draw.rect(screen, 'OliveDrab', [int(1420 * prop), int(615 * prop), int(150 * prop), int(112 * prop)],
+                     border_radius=10)
     string_rendered = font.render('20', 1, pygame.Color('black'))
     screen.blit(string_rendered, (int(1448 * prop), int(637 * prop)))
 
-    pygame.draw.rect(screen, 'Salmon', [int(1420 * prop), int(750 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
+    pygame.draw.rect(screen, 'Salmon', [int(1420 * prop), int(750 * prop), int(150 * prop), int(112 * prop)],
+                     border_radius=10)
     string_rendered = font.render('40', 1, pygame.Color('black'))
     screen.blit(string_rendered, (int(1448 * prop), int(772 * prop)))
 
@@ -74,34 +77,49 @@ def start_screen():  # Создание экрана
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if int(735 * prop) < event.pos[0] < int(1050 * prop) and int(750 * prop) < event.pos[1] < int(862 * prop):
+                if int(735 * prop) < event.pos[0] < int(1050 * prop) and int(750 * prop) < event.pos[1] < int(
+                        862 * prop):
                     return 1  # start level 1
-                if int(1080 * prop) < event.pos[0] < int(1395 * prop) and int(750 * prop) < event.pos[1] < int(862 * prop):
+                if int(1080 * prop) < event.pos[0] < int(1395 * prop) and int(750 * prop) < event.pos[1] < int(
+                        862 * prop):
                     return 2  # start level 2
 
-                if int(1420 * prop) < event.pos[0] < int(1550 * prop) and int(615 * prop) < event.pos[1] < int(727 * prop):
-                    pygame.draw.rect(screen, 'OliveDrab', [int(1420 * prop), int(615 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
+                if int(1420 * prop) < event.pos[0] < int(1550 * prop) and int(615 * prop) < event.pos[1] < int(
+                        727 * prop):
+                    pygame.draw.rect(screen, 'OliveDrab',
+                                     [int(1420 * prop), int(615 * prop), int(150 * prop), int(112 * prop)],
+                                     border_radius=10)
                     string_rendered = font.render('20', 1, pygame.Color('black'))
                     screen.blit(string_rendered, (int(1448 * prop), int(637 * prop)))
 
-                    pygame.draw.rect(screen, 'Salmon', [int(1420 * prop), int(750 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
+                    pygame.draw.rect(screen, 'Salmon',
+                                     [int(1420 * prop), int(750 * prop), int(150 * prop), int(112 * prop)],
+                                     border_radius=10)
                     string_rendered = font.render('40', 1, pygame.Color('black'))
                     screen.blit(string_rendered, (int(1448 * prop), int(772 * prop)))
                     balls_count = 20
 
-                if int(1420 * prop) < event.pos[0] < int(1550 * prop) and int(750 * prop) < event.pos[1] < int(862 * prop):
-                    pygame.draw.rect(screen, 'Salmon', [int(1420 * prop), int(615 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
+                if int(1420 * prop) < event.pos[0] < int(1550 * prop) and int(750 * prop) < event.pos[1] < int(
+                        862 * prop):
+                    pygame.draw.rect(screen, 'Salmon',
+                                     [int(1420 * prop), int(615 * prop), int(150 * prop), int(112 * prop)],
+                                     border_radius=10)
                     string_rendered = font.render('20', 1, pygame.Color('black'))
                     screen.blit(string_rendered, (int(1448 * prop), int(637 * prop)))
 
-                    pygame.draw.rect(screen, 'OliveDrab', [int(1420 * prop), int(750 * prop), int(150 * prop), int(112 * prop)], border_radius=10)
+                    pygame.draw.rect(screen, 'OliveDrab',
+                                     [int(1420 * prop), int(750 * prop), int(150 * prop), int(112 * prop)],
+                                     border_radius=10)
                     string_rendered = font.render('40', 1, pygame.Color('black'))
                     screen.blit(string_rendered, (int(1448 * prop), int(772 * prop)))
                     balls_count = 40
 
-                if int(735 * prop) < event.pos[0] < int(1395 * prop) and int(615 * prop) < event.pos[1] < int(727 * prop):
+                if int(735 * prop) < event.pos[0] < int(1395 * prop) and int(615 * prop) < event.pos[1] < int(
+                        727 * prop):
                     text_font_2 = pygame.font.Font(None, int(45 * prop))
-                    pygame.draw.rect(screen, 'PeachPuff', [int(75 * prop), int(615 * prop), int(600 * prop), int(247 * prop)], border_radius=10)
+                    pygame.draw.rect(screen, 'PeachPuff',
+                                     [int(75 * prop), int(615 * prop), int(600 * prop), int(247 * prop)],
+                                     border_radius=10)
                     text_coord = int(660 * prop)
                     for line in intro_text:
                         string_rendered = text_font_2.render(line, 1, pygame.Color('black'))
@@ -112,7 +130,9 @@ def start_screen():  # Создание экрана
                         text_coord += intro_rect.height
                         screen.blit(string_rendered, intro_rect)
                     font_3 = pygame.font.Font(None, int(67 * prop))
-                    pygame.draw.rect(screen, 'LightSalmon', [int(97 * prop), int(592 * prop), int(225 * prop), int(60 * prop)], border_radius=10)
+                    pygame.draw.rect(screen, 'LightSalmon',
+                                     [int(97 * prop), int(592 * prop), int(225 * prop), int(60 * prop)],
+                                     border_radius=10)
                     string_rendered = font_3.render('Правила', 1, pygame.Color('black'))
                     screen.blit(string_rendered, (int(112 * prop), int(600 * prop)))
         pygame.display.flip()
@@ -145,7 +165,8 @@ def chuprina_screen(result):
     screen.blit(string_rendered, (int(80 * prop), int(780 * prop)))
 
     font = pygame.font.Font(None, int(120 * prop))
-    pygame.draw.rect(screen, 'PeachPuff', [(1310 * prop), (700 * prop), int(280 * prop), int(150 * prop)], border_radius=10)
+    pygame.draw.rect(screen, 'PeachPuff', [(1310 * prop), (700 * prop), int(280 * prop), int(150 * prop)],
+                     border_radius=10)
     string_rendered = font.render('Выйти', 1, pygame.Color('black'))
     screen.blit(string_rendered, (int(1320 * prop), int(740 * prop)))
 
@@ -154,13 +175,16 @@ def chuprina_screen(result):
             if event_1.type == pygame.QUIT:
                 terminate()
             elif event_1.type == pygame.MOUSEBUTTONDOWN:
-                if int(1310 * prop) < event_1.pos[0] < int(1590 * prop) and int(700 * prop) < event_1.pos[1] < int(850 * prop):
+                if int(1310 * prop) < event_1.pos[0] < int(1590 * prop) and int(700 * prop) < event_1.pos[1] < int(
+                        850 * prop):
                     terminate()
-                if int(20 * prop) < event_1.pos[0] < int(300 * prop) and int(700 * prop) < event_1.pos[1] < int(850 * prop):
+                if int(20 * prop) < event_1.pos[0] < int(300 * prop) and int(700 * prop) < event_1.pos[1] < int(
+                        850 * prop):
                     print(2)
                     pygame.mixer.music.stop()
-                    return # start
-                if int(320 * prop) < event_1.pos[0] < int(1290 * prop) and int(700 * prop) < event_1.pos[1] < int(850 * prop):
+                    return  # start
+                if int(320 * prop) < event_1.pos[0] < int(1290 * prop) and int(700 * prop) < event_1.pos[1] < int(
+                        850 * prop):
                     pass
         pygame.display.flip()
         clock.tick(FPS)
@@ -203,7 +227,7 @@ class Tile(pygame.sprite.Sprite):
                     cell_size * (pos_x // 2) + delta, cell_size * (pos_y // 2) + delta)
             elif tile_type == 'free_right' or tile_type == 'Right_wall':
                 self.rect = self.image.get_rect().move(
-                    cell_size * (pos_x - pos_x // 2) - delta + delta, cell_size * (pos_y // 2)+ delta)
+                    cell_size * (pos_x - pos_x // 2) - delta + delta, cell_size * (pos_y // 2) + delta)
             elif tile_type == 'free_down' or tile_type == 'Down_wall':
                 self.rect = self.image.get_rect().move(
                     cell_size * (pos_x // 2) + delta, cell_size * (pos_y - pos_y // 2) - delta + delta)
@@ -276,7 +300,7 @@ class Balls(pygame.sprite.Sprite):
         self.sin_x = pos_x * cell_size + delta
         self.sin_y = pos_y * cell_size + delta
         self.x_ball = 0
-        self.y_ball =0
+        self.y_ball = 0
         self.between_wall = False
         self.hero_x = ''
         self.hero_y = ''
@@ -290,26 +314,29 @@ class Balls(pygame.sprite.Sprite):
         self.last_action = ''
 
     def runaway(self):
-        if self.direction == 'D' and level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y', 's']:
+        if self.direction == 'D' and level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y',
+                                                                                                               's']:
             if level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y', 's']:
                 self.direction = 'L'
             elif level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y', 's']:
                 self.direction = 'R'
 
-        if self.direction == 'U' and level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y', 's']:
+        if self.direction == 'U' and level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] in ['Y', 'y',
+                                                                                                               's']:
             if level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y', 's']:
                 self.direction = 'L'
             elif level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y', 's']:
                 self.direction = 'R'
 
-
-        if self.direction == 'L' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] in ['Y', 'y', 's']:
+        if self.direction == 'L' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] in ['Y', 'y',
+                                                                                                               's']:
             if level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
                 self.direction = 'U'
             elif level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
                 self.direction = 'D'
 
-        if self.direction == 'R' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] in ['Y', 'y', 's']:
+        if self.direction == 'R' and level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] in ['Y', 'y',
+                                                                                                               's']:
             if level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
                 self.direction = 'U'
             elif level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
@@ -326,14 +353,14 @@ class Balls(pygame.sprite.Sprite):
 
         return self.direction
 
-
     def update(self):
 
         if self.x_ball == 0 and self.y_ball == 0:
             self.direction = random.choice(self.lst)
             while self.direction == self.last_action:
                 self.direction = random.choice(self.lst)
-        if abs((self.sin_x - 75) // 225 - (kos_x - 75) // 225) < 3 and abs((self.sin_y - 75) // 225 - (kos_y - 75) // 225) < 3:
+        if abs((self.sin_x - 75) // 225 - (kos_x - 75) // 225) < 3 and abs(
+                (self.sin_y - 75) // 225 - (kos_y - 75) // 225) < 3:
             self.between_wall = False
 
             self.dukky_x = kos_x
@@ -352,7 +379,6 @@ class Balls(pygame.sprite.Sprite):
             elif to_y <= -5:
                 self.dukky_y = kos_y - 225
 
-
             self.grib_x = self.sin_x
             self.grib_y = self.sin_y
             if self.x_ball >= 8:
@@ -368,7 +394,6 @@ class Balls(pygame.sprite.Sprite):
                 self.grib_y = self.sin_y
             elif self.y_ball <= -8:
                 self.grib_y = self.sin_y - 225
-
 
             if (self.grib_x - 75) // 225 - (self.dukky_x - 75) // 225 < 0:
                 self.hero_x = 'R'
@@ -403,7 +428,6 @@ class Balls(pygame.sprite.Sprite):
                     if self.between_wall is False:
                         self.direction = 'D'
 
-
             if self.hero_y == 'on_line':
                 if self.hero_x == 'L':
                     for x_wall in range((self.dukky_x - 75) // 225 * 2, (self.grib_x - 75) // 225 * 2):
@@ -423,61 +447,86 @@ class Balls(pygame.sprite.Sprite):
                     if self.between_wall is False:
                         self.direction = 'L'
 
-
             if self.between_wall is False:
                 self.direction = self.runaway()
             else:
-                if self.hero_x == 'R' and self.hero_y == 'on_line' and (self.dukky_x - 75) // 225 * 2 == (self.grib_x - 75) // 225 * 2 + 2 and level[(self.grib_y - 75) // 225 * 2][(self.grib_x - 75) // 225 * 2 + 1] in ['Y', 'y']:
+                if self.hero_x == 'R' and self.hero_y == 'on_line' and (self.dukky_x - 75) // 225 * 2 == (
+                        self.grib_x - 75) // 225 * 2 + 2 and level[(self.grib_y - 75) // 225 * 2][
+                    (self.grib_x - 75) // 225 * 2 + 1] in ['Y', 'y']:
                     self.rect.x -= 100000
                     self.sin_x -= 10000000
                     print('U were killed by CHUPRINA - right')
                     print_life(-1)
 
-                if self.hero_x == 'L' and self.hero_y == 'on_line' and (self.dukky_x - 75) // 225 * 2 == (self.grib_x - 75) // 225 * 2 - 2 and level[(self.grib_y - 75) // 225 * 2][(self.grib_x - 75) // 225 * 2 - 1] in ['Y', 'y']:
+                if self.hero_x == 'L' and self.hero_y == 'on_line' and (self.dukky_x - 75) // 225 * 2 == (
+                        self.grib_x - 75) // 225 * 2 - 2 and level[(self.grib_y - 75) // 225 * 2][
+                    (self.grib_x - 75) // 225 * 2 - 1] in ['Y', 'y']:
                     self.rect.x -= 1000000
                     self.sin_x -= 1000000
                     print('U were killed by CHUPRINA - left')
                     print_life(-1)
 
-                if self.hero_x == 'on_line' and self.hero_y == 'D' and (self.dukky_y - 75) // 225 * 2 == (self.grib_y - 75) // 225 * 2 + 2 and level[(self.grib_y - 75) // 225 * 2 + 1][(self.grib_x - 75) // 225 * 2] in ['Y', 'y']:
+                if self.hero_x == 'on_line' and self.hero_y == 'D' and (self.dukky_y - 75) // 225 * 2 == (
+                        self.grib_y - 75) // 225 * 2 + 2 and level[(self.grib_y - 75) // 225 * 2 + 1][
+                    (self.grib_x - 75) // 225 * 2] in ['Y', 'y']:
                     self.rect.x -= 100000
                     self.sin_x -= 1000000
                     print('U were killed by CHUPRINA - down')
                     print_life(-1)
 
-                if self.hero_x == 'on_line' and self.hero_y == 'U' and (self.dukky_y - 75) // 225 * 2 == (self.grib_y - 75) // 225 * 2 - 2 and level[(self.grib_y - 75) // 225 * 2 - 1][(self.grib_x - 75) // 225 * 2] in ['Y', 'y']:
+                if self.hero_x == 'on_line' and self.hero_y == 'U' and (self.dukky_y - 75) // 225 * 2 == (
+                        self.grib_y - 75) // 225 * 2 - 2 and level[(self.grib_y - 75) // 225 * 2 - 1][
+                    (self.grib_x - 75) // 225 * 2] in ['Y', 'y']:
                     self.rect.x -= 1000000
                     self.sin_x -= 1000000
                     print('U were killed by CHUPRINA - up')
                     print_life(-1)
 
         if self.sin_x > 0:
-            if self.direction == 'L' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 - 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(self.sin_x - 75) // 225 * 2 - 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
+            if self.direction == 'L' and (((level[(self.sin_y - 75) // 225 * 2][
+                                                (self.sin_x - 75) // 225 * 2 - 1] not in ['Y',
+                                                                                          'y'] or self.x_ball != 0) and self.y_ball == 0) or (
+                                                  (level[(self.sin_y - 75) // 225 * 2 + int(
+                                                          math.copysign(1, self.y_ball))][(
+                                                                                                  self.sin_x - 75) // 225 * 2 - 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
                 self.x_ball -= 1
                 if self.x_ball == -15:
                     self.x_ball = 0
                     self.sin_x -= 225
                 self.rect.x -= 15
-            elif self.direction == 'R' and (((level[(self.sin_y - 75) // 225 * 2][(self.sin_x - 75) // 225 * 2 + 1] not in ['Y', 'y'] or self.x_ball != 0) and self.y_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + int(math.copysign(1, self.y_ball))][(self.sin_x - 75) // 225 * 2 + 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
+            elif self.direction == 'R' and (((level[(self.sin_y - 75) // 225 * 2][
+                                                  (self.sin_x - 75) // 225 * 2 + 1] not in ['Y',
+                                                                                            'y'] or self.x_ball != 0) and self.y_ball == 0) or (
+                                                    (level[(self.sin_y - 75) // 225 * 2 + int(
+                                                            math.copysign(1, self.y_ball))][(
+                                                                                                    self.sin_x - 75) // 225 * 2 + 1] == 'p' or self.x_ball != 0) and self.y_ball != 0)):
                 self.x_ball += 1
                 if self.x_ball == 15:
                     self.x_ball = 0
                     self.sin_x += 225
                 self.rect.x += 15
-            elif self.direction == 'U' and (((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 - 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1, self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
+            elif self.direction == 'U' and (((level[(self.sin_y - 75) // 225 * 2 - 1][
+                                                  (self.sin_x - 75) // 225 * 2] not in ['Y',
+                                                                                        'y'] or self.y_ball != 0) and self.x_ball == 0) or (
+                                                    (level[(self.sin_y - 75) // 225 * 2 - 1][
+                                                         (self.sin_x - 75) // 225 * 2 + int(math.copysign(1,
+                                                                                                          self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
                 self.y_ball -= 1
                 if self.y_ball == -15:
                     self.y_ball = 0
                     self.sin_y -= 225
                 self.rect.y -= 15
-            elif self.direction == 'D' and (((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2] not in ['Y', 'y'] or self.y_ball != 0) and self.x_ball == 0) or ((level[(self.sin_y - 75) // 225 * 2 + 1][(self.sin_x - 75) // 225 * 2 + int(math.copysign(1, self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
+            elif self.direction == 'D' and (((level[(self.sin_y - 75) // 225 * 2 + 1][
+                                                  (self.sin_x - 75) // 225 * 2] not in ['Y',
+                                                                                        'y'] or self.y_ball != 0) and self.x_ball == 0) or (
+                                                    (level[(self.sin_y - 75) // 225 * 2 + 1][
+                                                         (self.sin_x - 75) // 225 * 2 + int(math.copysign(1,
+                                                                                                          self.x_ball))] == 'p' or self.y_ball != 0) and self.x_ball != 0)):
                 self.y_ball += 1
                 if self.y_ball == 15:
                     self.y_ball = 0
                     self.sin_y += 225
                 self.rect.y += 15
-
-
 
         if pygame.sprite.collide_mask(self, player):
             self.rect = self.rect.move(-1000000, -1000000)
@@ -694,7 +743,7 @@ while running:
         if fup and (((level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2] not in ['Y',
                                                                                           'y'] or to_y != 0) and to_x == 0) or (
                             (level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2 + int(
-                                    math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
+                                math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
             to_y -= 1
             if to_y == -9:
                 to_y = 0
@@ -705,7 +754,7 @@ while running:
         if fdown and (((level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2] not in ['Y',
                                                                                             'y'] or to_y != 0) and to_x == 0) or (
                               (level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2 + int(
-                                      math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
+                                  math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
             to_y += 1
             if to_y == 9:
                 to_y = 0
@@ -755,4 +804,3 @@ while running:
         lives = 3
 
 pygame.quit()
-
