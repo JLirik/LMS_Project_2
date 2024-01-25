@@ -1,11 +1,9 @@
-import math
 import os
 import random
 import sys
 import pygame
 import time
 import math
-import moviepy.editor
 
 pygame.init()
 prop = 0.9
@@ -41,10 +39,10 @@ def terminate():
 def start_screen():  # Создание экрана
     global balls_count
     intro_text = [
-        "Вы бегаете по лабиринту за пса",
-        "и лопаете чупринчиков.",
+        "Вы бегаете по лабиринту за утку",
+        "и едите яблочки.",
         'Лопните как можно больше',
-        "чупринчиков и не умрите."
+        "яблок и не умрите."
     ]
 
     fon = pygame.transform.scale(load_image('fon1.jpg'), size)
@@ -164,8 +162,6 @@ def chuprina_screen(result):
                     return # start
                 if int(320 * prop) < event_1.pos[0] < int(1290 * prop) and int(700 * prop) < event_1.pos[1] < int(850 * prop):
                     pass
-                    # video = moviepy.editor.VideoFileClip("data/video-fon1.mp4")
-                    # video.preview()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -176,13 +172,6 @@ def load_level(filename):
     with open(filename, 'r') as mapFile:
         level_map = [line.strip() for line in mapFile]
 
-    # и подсчитываем максимальную длину
-    # max_width = max(map(len, level_map))
-    # print(max_width)
-
-    # дополняем каждую строку пустыми клетками ('=') + убираем ненужные клетки
-    # lvl_1 = list(map(lambda x: x.ljust(max_width, '='), level_map))
-
     return level_map
 
 
@@ -191,16 +180,15 @@ cell_size = 75 * proportions
 delta = 25 * proportions
 
 tile_images = {
-    'Right_wall': load_image('3x_right_wall.png'),
-    'Down_wall': load_image('3x_down_wall.png'),
-    'free_cell': load_image('3x_road.png'),
-    'free_right': load_image('3x_right_road.png'),
-    'free_down': load_image('3x_down_road.png'),
-    'close_cell': load_image('3x_wall.png'),
-    'free_corner': load_image('3x_corner_road.png'),
-    'corner_wall': load_image('3x_corner_wall.png')
+    'Right_wall': load_image('stone-right.png'),
+    'Down_wall': load_image('stone-down.png'),
+    'free_cell': load_image('azalia-road.png'),
+    'free_right': load_image('azalia-right.png'),
+    'free_down': load_image('azalia-down.png'),
+    'close_cell': load_image('diamond.png'),
+    'free_corner': load_image('azalia-corner.png'),
+    'corner_wall': load_image('stone-corner.png')
 }
-player_image = load_image('Player_doge.png')
 ball_image = load_image('apple-1.png')
 life_image = load_image('bonus_life.png')
 
@@ -264,14 +252,6 @@ class Camera:
     def update(self, target):
         self.dx = -(target.rect.x + target.rect.w // 2 - width // 2)
         self.dy = -(target.rect.y + target.rect.h // 2 - height // 2)
-
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y):
-        super().__init__(player_group, all_sprites)
-        self.image = player_image
-        self.rect = self.image.get_rect().move(
-            cell_size * (pos_x // 2) + delta, cell_size * (pos_y // 2) + delta)
 
 
 class Life(pygame.sprite.Sprite):
@@ -345,44 +325,6 @@ class Balls(pygame.sprite.Sprite):
             self.last_action = 'U'
 
         return self.direction
-    def jump(self):
-        print(1)
-        if self.x_ball > 0:
-            self.direction = 'D'
-        if self.x_ball < 0:
-            self.direction = 'U'
-        if self.y_ball > 0:
-            self.direction = 'L'
-        if self.y_ball < 0:
-            self.direction = 'R'
-
-        if self.x_ball == 0 and self.y_ball == 0:
-            self.air = random.choice(self.lst)
-            f = 0
-            while f != 1:
-                if not(self.air == self.hero_x or self.air == self.hero_y):
-                    if self.direction == 'D' and level[(self.sin_y - 75) // 225 * 2 + 1][
-                        (self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
-                        f = 1
-                        self.rect.move(0, 225)
-                        self.sin_y += 225
-                    if self.direction == 'U' and level[(self.sin_y - 75) // 225 * 2 - 1][
-                        (self.sin_x - 75) // 225 * 2] not in ['Y', 'y', 's']:
-                        f = 1
-                        self.rect.move(0, -225)
-                        self.sin_y -= 225
-                    if self.direction == 'L' and level[(self.sin_y - 75) // 225 * 2][
-                        (self.sin_x - 75) // 225 * 2 - 1] in ['Y', 'y', 's']:
-                        f = 1
-                        self.rect.move(-225, 0)
-                        self.sin_x -= 225
-                    if self.direction == 'R' and level[(self.sin_y - 75) // 225 * 2][
-                        (self.sin_x - 75) // 225 * 2 + 1] in ['Y', 'y', 's']:
-                        f = 1
-                        self.rect.move(225, 0)
-                        self.sin_x += 225
-
-
 
 
     def update(self):
@@ -391,12 +333,8 @@ class Balls(pygame.sprite.Sprite):
             self.direction = random.choice(self.lst)
             while self.direction == self.last_action:
                 self.direction = random.choice(self.lst)
-        # if abs((self.sin_x - 75) // 225 - (kos_x - 75) // 225) <= 1 and abs((self.sin_y - 75) // 225 - (kos_y - 75) // 225) <= 1:
-        #     self.jump()
         if abs((self.sin_x - 75) // 225 - (kos_x - 75) // 225) < 3 and abs((self.sin_y - 75) // 225 - (kos_y - 75) // 225) < 3:
             self.between_wall = False
-
-
 
             self.dukky_x = kos_x
             self.dukky_y = kos_y
@@ -494,6 +432,7 @@ class Balls(pygame.sprite.Sprite):
                     self.sin_x -= 10000000
                     print('U were killed by CHUPRINA - right')
                     print_life(-1)
+
                 if self.hero_x == 'L' and self.hero_y == 'on_line' and (self.dukky_x - 75) // 225 * 2 == (self.grib_x - 75) // 225 * 2 - 2 and level[(self.grib_y - 75) // 225 * 2][(self.grib_x - 75) // 225 * 2 - 1] in ['Y', 'y']:
                     self.rect.x -= 1000000
                     self.sin_x -= 1000000
@@ -546,6 +485,60 @@ class Balls(pygame.sprite.Sprite):
             print_kill(1)
 
 
+class AnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, x, y, idle, columns1, rows1):
+        super().__init__(player_group)
+        self.napr = True
+        self.columns = columns
+        self.columns1 = columns1
+        self.frames = []
+        self.framesi = []
+        self.cut_sheet(sheet, columns, rows, self.frames)
+        self.cut_sheet(idle, columns1, rows1, self.framesi)
+        self.cur_frame = 0
+        self.cur_framei = 0
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.rect.move(cell_size * (x // 2) - 45, cell_size * (y // 2) + delta + 10)
+
+    def cut_sheet(self, sheet, columns, rows, spi):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                spi.append(sheet.subsurface(pygame.Rect(
+                    frame_location, self.rect.size)))
+
+    def update(self, rav):
+        if rav == 'left':
+            self.image = pygame.transform.flip(self.frames[self.cur_frame % self.columns], True, False)
+            self.cur_frame += 1
+            self.napr = False
+
+        elif rav == 'right':
+            self.image = self.frames[self.cur_frame % self.columns]
+            self.cur_frame += 1
+            self.napr = True
+        elif rav == 'up':
+            self.cur_frame += 1
+            if self.napr:
+                self.image = self.frames[self.cur_frame % self.columns]
+            else:
+                self.image = pygame.transform.flip(self.frames[self.cur_frame % self.columns], True, False)
+        elif rav == 'down':
+            self.cur_frame += 1
+            if self.napr:
+                self.image = self.frames[self.cur_frame % self.columns]
+            else:
+                self.image = pygame.transform.flip(self.frames[self.cur_frame % self.columns], True, False)
+        else:
+            if self.napr:
+                self.image = self.framesi[self.cur_framei % self.columns1]
+            else:
+                self.image = pygame.transform.flip(self.framesi[self.cur_framei % self.columns1], True, False)
+            self.cur_framei += 1
+
+
 def print_kill(n):
     global kills, balls_count
     kills += n
@@ -584,7 +577,7 @@ def generate_level(level):
                 Tile('corner_wall', x, y)
             elif level[y][x] == '@':
                 Tile('free_cell', x, y)
-                new_player = Player(x, y)
+                new_player = AnimatedSprite(load_image("walk2.png"), 4, 1, x, y, load_image("idle2.png"), 4, 1)
     for i in range(21):  # Горизонтальная граница Верхняя
         Tile('None', i, -1)
     for i in range(21):  # Вертикальная граница Левая
@@ -602,6 +595,11 @@ def generate_level(level):
 
 running = True
 while running:
+    rav = ''
+    fleft = False
+    fright = False
+    fup = False
+    fdown = False
     num = start_screen()
     level = load_level(f'lvl{num}.txt')
     player = None
@@ -632,52 +630,94 @@ while running:
     barboss = True
 
     player, level_x, level_y = generate_level(load_level(f'lvl{num}.txt'))
-    kos_x = player.rect.x
-    kos_y = player.rect.y
+    kos_x = player.rect.x + 120
+    kos_y = player.rect.y - 10
     camera = Camera()
     camera.update(player)
     for sprite in all_sprites:
         camera.apply(sprite)
+    for sprite in player_group:
+        camera.apply(sprite)
     pygame.display.flip()
     to_x, to_y = 0, 0
-
+    pygame.mixer.music.load("data/game.mp3")
+    pygame.mixer.music.play(-1)
     while barboss:
         camup = 0
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 running = False
                 barboss = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT and (((level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 - 1] not in ['Y', 'y'] or to_x != 0) and to_y == 0) or ((level[(kos_y - 75) // 225 * 2 + int(math.copysign(1, to_y))][(kos_x - 75) // 225 * 2 - 1] == 'p' or to_x != 0) and to_y != 0)):
-                    to_x -= 1
-                    if to_x == -9:
-                        to_x = 0
-                        kos_x -= 225
-                    player.rect.x -= 25
-                    camup = 1
-                elif event.key == pygame.K_RIGHT and (((level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 + 1] not in ['Y', 'y'] or to_x != 0) and to_y == 0) or ((level[(kos_y - 75) // 225 * 2 + int(math.copysign(1, to_y))][(kos_x - 75) // 225 * 2 + 1] == 'p' or to_x != 0) and to_y != 0)):
-                    to_x += 1
-                    if to_x == 9:
-                        to_x = 0
-                        kos_x += 225
-                    player.rect.x += 25
-                    camup = 1
-                elif event.key == pygame.K_UP and (((level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y'] or to_y != 0) and to_x == 0) or ((level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2 + int(math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
-                    to_y -= 1
-                    if to_y == -9:
-                        to_y = 0
-                        kos_y -= 225
-                    player.rect.y -= 25
-                    camup = 1
-                elif event.key == pygame.K_DOWN and (((level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2] not in ['Y', 'y'] or to_y != 0) and to_x == 0) or ((level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2 + int(math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
-                    to_y += 1
-                    if to_y == 9:
-                        to_y = 0
-                        kos_y += 225
-                    player.rect.y += 25
-                    camup = 1
+                if event.key == pygame.K_LEFT:
+                    fleft = True
 
-        screen.fill(pygame.Color("white"))
+                elif event.key == pygame.K_RIGHT:
+                    fright = True
+
+                elif event.key == pygame.K_UP:
+                    fup = True
+
+                elif event.key == pygame.K_DOWN:
+                    fdown = True
+
+            elif event.type == pygame.KEYUP:
+                if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                    fleft = False
+                    fright = False
+                    fup = False
+                    fdown = False
+                    rav = ''
+        if fright and (((level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 + 1] not in ['Y',
+                                                                                             'y'] or to_x != 0) and to_y == 0) or (
+                               (level[(kos_y - 75) // 225 * 2 + int(math.copysign(1, to_y))][
+                                    (kos_x - 75) // 225 * 2 + 1] == 'p' or to_x != 0) and to_y != 0)):
+            to_x += 1
+            if to_x == 9:
+                to_x = 0
+                kos_x += 225
+            player.rect.x += 25
+            camup = 1
+            rav = 'right'
+        if fleft and (((level[(kos_y - 75) // 225 * 2][(kos_x - 75) // 225 * 2 - 1] not in ['Y',
+                                                                                            'y'] or to_x != 0) and to_y == 0) or (
+                              (level[(kos_y - 75) // 225 * 2 + int(math.copysign(1, to_y))][
+                                   (kos_x - 75) // 225 * 2 - 1] == 'p' or to_x != 0) and to_y != 0)):
+            to_x -= 1
+            if to_x == -9:
+                to_x = 0
+                kos_x -= 225
+            player.rect.x -= 25
+            camup = 1
+            rav = 'left'
+        if fup and (((level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2] not in ['Y',
+                                                                                          'y'] or to_y != 0) and to_x == 0) or (
+                            (level[(kos_y - 75) // 225 * 2 - 1][(kos_x - 75) // 225 * 2 + int(
+                                    math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
+            to_y -= 1
+            if to_y == -9:
+                to_y = 0
+                kos_y -= 225
+            player.rect.y -= 25
+            camup = 1
+            rav = 'up'
+        if fdown and (((level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2] not in ['Y',
+                                                                                            'y'] or to_y != 0) and to_x == 0) or (
+                              (level[(kos_y - 75) // 225 * 2 + 1][(kos_x - 75) // 225 * 2 + int(
+                                      math.copysign(1, to_x))] == 'p' or to_y != 0) and to_x != 0)):
+            to_y += 1
+            if to_y == 9:
+                to_y = 0
+                kos_y += 225
+            player.rect.y += 25
+            camup = 1
+            rav = 'down'
+        player_group.update(rav)
+
+        # screen.fill(pygame.Color("white"))
+        fon = pygame.transform.scale(load_image('fon4.jpg'), size)
+        screen.blit(fon, (0, 0))
         all_sprites.draw(screen)
         tiles_group.draw(screen)
         player_group.draw(screen)
@@ -703,6 +743,8 @@ while running:
             camera.update(player)
             for sprite in all_sprites:
                 camera.apply(sprite)
+            for sprite in player_group:
+                camera.apply(sprite)
         pygame.display.flip()
         clock.tick(10)
     if kills == balls_count:
@@ -713,3 +755,4 @@ while running:
         lives = 3
 
 pygame.quit()
+
