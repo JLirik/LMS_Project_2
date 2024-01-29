@@ -798,10 +798,12 @@ while running:
         clock.tick(10)
     if kills == balls_count:
         chuprina_screen('win')
+        balls_count = 20
         kills = 0
         lives = 3
     if lives == 0:
         chuprina_screen('lose')
+        balls_count = 20
         kills = 0
         lives = 3
 
